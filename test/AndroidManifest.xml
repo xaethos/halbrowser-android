@@ -21,7 +21,7 @@
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:label="Tests for net.xaethos.android.halbrowser"
-        android:targetPackage="net.xaethos.android.halbrowser" />
+        android:targetPackage="net.xaethos.android.halbrowser.tests" />
 
     <uses-sdk
         android:minSdkVersion="8"
