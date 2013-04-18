@@ -11,36 +11,35 @@ import android.view.ViewGroup;
 public interface ResourceFragment
 {
 
-    public HALResource getRepresentation();
+    public HALResource getResource();
 
-    public void setRepresentation(HALResource representation);
+    public void setResource(HALResource resource);
 
-    public void bindRepresentation(View view, HALResource representation);
+    public void bindResource(View view, HALResource resource);
 
     public View getPropertyView(LayoutInflater inflater,
             View rootView,
             ViewGroup container,
-            HALResource representation,
+            HALResource resource,
             String name);
 
-    public void bindPropertyView(View propertyView, HALResource representation, String name, Object value);
+    public void bindPropertyView(View propertyView, HALResource resource, String name, Object value);
 
     public View getLinkView(LayoutInflater inflater,
             View rootView,
             ViewGroup container,
-            HALResource representation,
+            HALResource resource,
             HALLink link);
 
-    public void bindLinkView(View propertyView, HALResource representation, HALLink link);
+    public void bindLinkView(View propertyView, HALResource resource, HALLink link);
 
     public View getResourceView(LayoutInflater inflater,
             View rootView,
             ViewGroup container,
-            HALResource representation,
             String rel,
             HALResource resource);
 
-    public void bindResourceView(View propertyView, HALResource representation, String rel, HALResource resource);
+    public void bindResourceView(View propertyView, String rel, HALResource resource);
 
     // ***** Inner classes
 

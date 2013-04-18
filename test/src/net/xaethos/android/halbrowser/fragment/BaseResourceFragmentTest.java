@@ -39,7 +39,7 @@ public class BaseResourceFragmentTest extends ActivityInstrumentationTestCase2<T
                                               .build();
 
         BaseResourceFragment.Builder builder = new BaseResourceFragment.Builder();
-        activity.loadFragment(builder.setRepresentation(resource).buildFragment(BaseResourceFragment.class));
+        activity.loadFragment(builder.setResource(resource).buildFragment(BaseResourceFragment.class));
 
         assertThat(solo.searchText("John"), is(true));
         assertThat(solo.searchText("Fido"), is(true));

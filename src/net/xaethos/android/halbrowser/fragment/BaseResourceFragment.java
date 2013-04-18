@@ -19,7 +19,7 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     // ***** Constants
 
     // *** Argument/State keys
-    protected static final String ARG_REPRESENTATION = "representation";
+    protected static final String ARG_RESOURCE = "resource";
 
     protected static final String ARG_FRAGMENT_LAYOUT = "fragment_layout";
     protected static final String ARG_PROPERTY_LAYOUT = "property_layout";
@@ -30,25 +30,25 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
 
     // ***** Instance fields
 
-    private HALResource mRepresentation;
+    private HALResource mResource;
     protected OnLinkFollowListener mLinkListener;
 
     // ***** Instance methods
 
     @Override
-    public HALResource getRepresentation() {
-        if (mRepresentation == null) {
+    public HALResource getResource() {
+        if (mResource == null) {
             Bundle args = getArguments();
             if (args != null) {
-                mRepresentation = args.getParcelable(ARG_REPRESENTATION);
+                mResource = args.getParcelable(ARG_RESOURCE);
             }
         }
-        return mRepresentation;
+        return mResource;
     }
 
     @Override
-    public void setRepresentation(HALResource representation) {
-        mRepresentation = representation;
+    public void setResource(HALResource resource) {
+        mResource = resource;
     }
 
     protected int getFragmentLayoutRes() {
@@ -92,27 +92,27 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        bindRepresentation(view, getRepresentation());
+        bindResource(view, getResource());
     }
 
     // *** View binding
 
     @Override
-    public void bindRepresentation(View view, HALResource representation) {
-        bindProperties(view, representation);
-        bindLinks(view, representation);
+    public void bindResource(View view, HALResource resource) {
+        bindProperties(view, resource);
+        bindLinks(view, resource);
     }
 
-    private void bindProperties(View view, HALResource representation) {
-        Map<String, Object> properties = representation.getProperties();
+    private void bindProperties(View view, HALResource resource) {
+        Map<String, Object> properties = resource.getProperties();
 
         ViewGroup propertiesLayout = (ViewGroup) view.findViewById(R.id.properties_layout);
         LayoutInflater inflater = LayoutInflater.from(getActivity());
 
         for (String name : properties.keySet()) {
-            View propertyView = getPropertyView(inflater, view, propertiesLayout, representation, name);
+            View propertyView = getPropertyView(inflater, view, propertiesLayout, resource, name);
             if (propertyView != null) {
-                bindPropertyView(propertyView, representation, name, properties.get(name));
+                bindPropertyView(propertyView, resource, name, properties.get(name));
                 if (propertyView.getParent() == null && propertiesLayout != null) {
                     propertiesLayout.addView(propertyView);
                 }
@@ -125,7 +125,7 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     public View getPropertyView(LayoutInflater inflater,
             View rootView,
             ViewGroup container,
-            HALResource representation,
+            HALResource resource,
             String name)
     {
         View view = rootView.findViewWithTag(propertyTag(name));
@@ -136,7 +136,7 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     }
 
     @Override
-    public void bindPropertyView(View propertyView, HALResource representation, String name, Object value) {
+    public void bindPropertyView(View propertyView, HALResource resource, String name, Object value) {
         View childView;
 
         childView = propertyView.findViewById(R.id.property_name);
@@ -150,17 +150,17 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
         }
     }
 
-    private void bindLinks(View view, HALResource representation) {
+    private void bindLinks(View view, HALResource resource) {
         ViewGroup layout = (ViewGroup) view.findViewById(R.id.links_layout);
         LayoutInflater inflater = LayoutInflater.from(getActivity());
 
         // Links
-        for (String rel : representation.getLinkRels()) {
+        for (String rel : resource.getLinkRels()) {
             if (!isViewableRel(rel)) continue;
-            for (HALLink link : representation.getLinks(rel)) {
-                View linkView = getLinkView(inflater, view, layout, representation, link);
+            for (HALLink link : resource.getLinks(rel)) {
+                View linkView = getLinkView(inflater, view, layout, resource, link);
                 if (linkView != null) {
-                    bindLinkView(linkView, representation, link);
+                    bindLinkView(linkView, resource, link);
                     if (linkView.getParent() == null && layout != null) {
                         layout.addView(linkView);
                     }
@@ -169,12 +169,12 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
         }
 
         // Resources
-        for (String rel : representation.getResourceRels()) {
+        for (String rel : resource.getResourceRels()) {
             if (!isViewableRel(rel)) continue;
-            for (HALResource resource : representation.getResources(rel)) {
-                View resourceView = getResourceView(inflater, view, layout, representation, rel, resource);
+            for (HALResource embeddedResource : resource.getResources(rel)) {
+                View resourceView = getResourceView(inflater, view, layout, rel, embeddedResource);
                 if (resourceView != null) {
-                    bindResourceView(resourceView, representation, rel, resource);
+                    bindResourceView(resourceView, rel, embeddedResource);
                     if (resourceView.getParent() == null && layout != null) {
                         layout.addView(resourceView);
                     }
@@ -187,7 +187,7 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     public View getLinkView(LayoutInflater inflater,
             View rootView,
             ViewGroup container,
-            HALResource representation,
+            HALResource resource,
             HALLink link)
     {
         String rel = link.getRel();
@@ -199,7 +199,7 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     }
 
     @Override
-    public void bindLinkView(View linkView, HALResource representation, HALLink link) {
+    public void bindLinkView(View linkView, HALResource resource, HALLink link) {
         View childView;
 
         childView = linkView.findViewById(R.id.link_title);
@@ -217,9 +217,8 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     public View getResourceView(LayoutInflater inflater,
             View rootView,
             ViewGroup container,
-            HALResource representation,
             String rel,
-            HALResource resource)
+            HALResource embeddedResource)
     {
         View view = getView().findViewWithTag(linkTag(rel));
         if (view == null && container != null) {
@@ -229,9 +228,9 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     }
 
     @Override
-    public void bindResourceView(View resourceView, HALResource representation, String rel, HALResource resource) {
+    public void bindResourceView(View resourceView, String rel, HALResource embeddedResource) {
         View childView;
-        HALLink link = resource.getLink("self");
+        HALLink link = embeddedResource.getLink("self");
 
         childView = resourceView.findViewById(R.id.link_title);
         if (childView instanceof TextView) {
@@ -245,8 +244,8 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
             resourceView.setTag(R.id.tag_link, link);
         }
 
-        bindProperties(resourceView, resource);
-        bindLinks(resourceView, resource);
+        bindProperties(resourceView, embeddedResource);
+        bindLinks(resourceView, embeddedResource);
     }
 
     // *** View.OnClickListener implementation
@@ -281,10 +280,10 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
             Bundle args = new Bundle();
             Bundle subArgs;
             // Set defaults...
-            args.putInt(ARG_FRAGMENT_LAYOUT, R.layout.default_representation_view);
-            args.putInt(ARG_PROPERTY_LAYOUT, R.layout.default_property_item);
+            args.putInt(ARG_FRAGMENT_LAYOUT, R.layout.resource_fragment);
+            args.putInt(ARG_PROPERTY_LAYOUT, R.layout.property_item);
             args.putBundle(ARG_PROPERTY_LAYOUT_MAP, new Bundle());
-            args.putInt(ARG_LINK_LAYOUT, R.layout.default_link_item);
+            args.putInt(ARG_LINK_LAYOUT, R.layout.link_item);
             args.putBundle(ARG_LINK_LAYOUT_MAP, new Bundle());
 
             subArgs = new Bundle();
@@ -296,8 +295,8 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
             mArgs = args;
         }
 
-        public Builder setRepresentation(HALResource representation) {
-            mArgs.putParcelable(ARG_REPRESENTATION, representation);
+        public Builder setResource(HALResource resource) {
+            mArgs.putParcelable(ARG_RESOURCE, resource);
             return this;
         }
 
