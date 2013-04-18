@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.net.URI;
 
 import net.xaethos.android.halbrowser.HALBrowserTestCase;
+import net.xaethos.android.halbrowser.Relation;
 import net.xaethos.android.halbrowser.tests.R;
 import net.xaethos.android.halparser.HALResource;
 
@@ -22,7 +23,7 @@ public class HALResourceLoaderTest extends HALBrowserTestCase
         HALResource resource = getLoaderResultSynchronously(loader);
 
         assertThat(resource, is(notNullValue()));
-        assertThat(resource.getLink("self").getHref(), is("https://example.com/api/customer/123456"));
+        assertThat(resource.getLink(Relation.SELF).getHref(), is("https://example.com/api/customer/123456"));
     }
 
 }

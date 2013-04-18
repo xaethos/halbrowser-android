@@ -1,0 +1,39 @@
+{
+  "_links" : {
+    "self" : {
+      "href" : "/user/123456",
+      "title" : "John in Title"
+    },
+    "alternate" : {
+      "href" : "/owner/145135"
+    }
+  },
+  "name" : "John",
+  "age" : 33,
+  "_embedded" : {
+    "pet" : [
+      {
+        "_links" : {
+          "self" : {
+            "href" : "/pet/321",
+            "title" : "Odis"
+          },
+          "toys" : {
+            "href" : "/pet/321/toys",
+            "title" : "Toys"
+          }
+        },
+        "type" : "Dog"
+      },
+      {
+        "_links" : {
+          "self" : {
+            "href" : "/pet/456"
+          }
+        },
+        "name" : "Garfield",
+        "type" : "Cat"
+      }
+    ]
+  }
+}

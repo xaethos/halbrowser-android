@@ -2,25 +2,33 @@ package net.xaethos.android.halbrowser.fragment;
 
 import java.util.Map;
 
+import static net.xaethos.android.halbrowser.Relation.*;
+
 import net.xaethos.android.halbrowser.R;
+
+import net.xaethos.android.halbrowser.adapter.SimpleRepresentationAdapter;
 import net.xaethos.android.halparser.HALLink;
 import net.xaethos.android.halparser.HALResource;
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
-public class BaseResourceFragment extends Fragment implements ResourceFragment, View.OnClickListener
+public class BaseResourceFragment extends ListFragment
+        implements
+        ResourceFragment,
+        View.OnClickListener,
+        AdapterView.OnItemClickListener
 {
     // ***** Constants
 
     // *** Argument/State keys
     protected static final String ARG_RESOURCE = "resource";
-
     protected static final String ARG_FRAGMENT_LAYOUT = "fragment_layout";
     protected static final String ARG_PROPERTY_LAYOUT = "property_layout";
     protected static final String ARG_LINK_LAYOUT = "link_layout";
@@ -49,6 +57,9 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     @Override
     public void setResource(HALResource resource) {
         mResource = resource;
+        if (resource != null) {
+            setListAdapter(new SimpleRepresentationAdapter(getActivity(), resource, getArguments()));
+        }
     }
 
     protected int getFragmentLayoutRes() {
@@ -83,16 +94,13 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
         super.onAttach(activity);
 
         if (activity instanceof OnLinkFollowListener) mLinkListener = (OnLinkFollowListener) activity;
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(getFragmentLayoutRes(), container, false);
+        setResource((HALResource) getArguments().get(ARG_RESOURCE));
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        bindResource(view, getResource());
+        getListView().setOnItemClickListener(this);
     }
 
     // *** View binding
@@ -230,7 +238,7 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
     @Override
     public void bindResourceView(View resourceView, String rel, HALResource embeddedResource) {
         View childView;
-        HALLink link = embeddedResource.getLink("self");
+        HALLink link = embeddedResource.getLink(SELF);
 
         childView = resourceView.findViewById(R.id.link_title);
         if (childView instanceof TextView) {
@@ -258,6 +266,23 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
         }
     }
 
+    // *** AdapterView.OnItemClickListener
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View itemView, int pos, long id) {
+        if (mLinkListener == null) return;
+
+        Object obj = getListAdapter().getItem(pos);
+        if (obj == null) return;
+
+        if (obj instanceof HALLink) {
+            mLinkListener.onFollowLink((HALLink) obj, null);
+        }
+        else if (obj instanceof HALResource) {
+            mLinkListener.onFollowLink(((HALResource) obj).getLink(SELF), null);
+        }
+    }
+
     // *** Helpers
 
     protected String propertyTag(String name) {
@@ -272,7 +297,7 @@ public class BaseResourceFragment extends Fragment implements ResourceFragment, 
 
     public static class Builder
     {
-        private static final String[] BASIC_RELS = { "self", "curie", "profile" };
+        private static final String[] BASIC_RELS = { SELF, CURIE, PROFILE };
 
         private final Bundle mArgs;
 
