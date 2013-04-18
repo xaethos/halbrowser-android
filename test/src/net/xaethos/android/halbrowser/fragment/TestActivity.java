@@ -7,11 +7,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-
+import android.util.Pair;
 
 public class TestActivity extends FragmentActivity implements ResourceFragment.OnLinkFollowListener
 {
-    HALLink lastFollowedLink;
+    Pair<HALLink, Map<String, Object>> lastFollowed;
 
     public void loadFragment(Fragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
@@ -25,7 +25,7 @@ public class TestActivity extends FragmentActivity implements ResourceFragment.O
 
     @Override
     public void onFollowLink(HALLink link, Map<String, Object> map) {
-        lastFollowedLink = link;
+        lastFollowed = new Pair<HALLink, Map<String, Object>>(link, map);
     }
 
 }

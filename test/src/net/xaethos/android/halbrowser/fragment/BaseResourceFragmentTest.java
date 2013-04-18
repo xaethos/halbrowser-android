@@ -45,6 +45,6 @@ public class BaseResourceFragmentTest extends ActivityInstrumentationTestCase2<T
         assertThat(solo.searchText("Fido"), is(true));
 
         solo.clickOnText("Fido");
-        assertThat(activity.lastFollowedLink, is(resource.getLink("pet")));
+        assertThat(activity.lastFollowed.first, is(resource.getLink("pet")));
     }
 }
