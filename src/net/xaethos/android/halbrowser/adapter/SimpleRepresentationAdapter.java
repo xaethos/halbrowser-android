@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.xaethos.android.halbrowser.R;
-import net.xaethos.android.halbrowser.R.layout;
 import net.xaethos.android.halbrowser.Relation;
 import net.xaethos.android.halparser.HALLink;
 import net.xaethos.android.halparser.HALResource;

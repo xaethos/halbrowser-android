@@ -5,7 +5,7 @@ import java.net.URI;
 import net.xaethos.android.halbrowser.loader.HALResourceLoader;
 import net.xaethos.android.halparser.HALResource;
 import android.content.Context;
-import android.content.Loader;
+import android.support.v4.content.Loader;
 
 public class APIClient
 {

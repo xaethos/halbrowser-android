@@ -2,12 +2,13 @@ package net.xaethos.android.halbrowser;
 
 import java.net.URI;
 
+import net.xaethos.android.test.SupportLoaderTestCase;
 import net.xaethos.lib.calico.spechelper.net.URLConnectionMocker;
 
-import android.test.LoaderTestCase;
-
-public class HALBrowserTestCase extends LoaderTestCase
+public class HALBrowserTestCase extends SupportLoaderTestCase
 {
+
+    protected static final URI exampleURI = URI.create("http://example.com/");
 
     protected URLConnectionMocker connectionMocker;
     protected URLConnectionMocker.RequestHandler requestHandler;
@@ -23,7 +24,5 @@ public class HALBrowserTestCase extends LoaderTestCase
         connectionMocker.finishMocking();
         super.tearDown();
     }
-
-    protected static final URI exampleURI = URI.create("http://example.com/");
 
 }

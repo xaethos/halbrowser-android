@@ -9,13 +9,13 @@
         android:id="@+id/property_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textIsSelectable="false" />
 
     <TextView
         android:id="@+id/property_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Value" />
+        android:textIsSelectable="false" />
 
 </LinearLayout>

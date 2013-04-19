@@ -8,7 +8,7 @@ import java.net.URI;
 import net.xaethos.android.halbrowser.tests.R;
 import net.xaethos.android.halparser.HALResource;
 import net.xaethos.lib.calico.spechelper.net.MockHttpURLConnection;
-import android.content.Loader;
+import android.support.v4.content.Loader;
 
 public class APIClientTest extends HALBrowserTestCase
 {

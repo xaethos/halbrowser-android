@@ -5,16 +5,17 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
     <!--
          We add an application tag here just so that we can indicate that
          this package needs to link against the android.test library,
          which is needed when building test cases.
     -->
-    <application>
-        <activity
-            android:name="net.xaethos.android.halbrowser.fragment.TestActivity"
-            android:label="@string/app_name" >
-        </activity>
+    <application android:allowBackup="false" >
+        <activity android:name="net.xaethos.android.halbrowser.fragment.TestActivity" />
 
         <uses-library android:name="android.test.runner" />
     </application>
@@ -28,9 +29,5 @@
         android:name="android.test.InstrumentationTestRunner"
         android:label="Tests for net.xaethos.android.halbrowser"
         android:targetPackage="net.xaethos.android.halbrowser.tests" />
-
-    <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
 
 </manifest>

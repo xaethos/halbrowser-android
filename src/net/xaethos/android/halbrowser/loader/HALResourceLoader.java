@@ -8,8 +8,8 @@ import java.net.URI;
 
 import net.xaethos.android.halparser.HALJsonParser;
 import net.xaethos.android.halparser.HALResource;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 public class HALResourceLoader extends AsyncTaskLoader<HALResource>
