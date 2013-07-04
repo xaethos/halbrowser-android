@@ -1,0 +1,4 @@
+include(
+  'HalBrowser',
+  'submodules:halparser-android:HalParser'
+)
