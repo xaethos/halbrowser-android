@@ -1,4 +1,1 @@
-include(
-  'HalBrowser',
-  'submodules:halparser-android:HalParser'
-)
+include 'submodules:halparser-android'
