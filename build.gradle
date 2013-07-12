@@ -4,7 +4,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:0.4.+'
+    classpath 'com.android.tools.build:gradle:0.5.+'
   }
 }
 
@@ -23,12 +23,6 @@ dependencies {
     'org.hamcrest:hamcrest-all:1.3',
     'com.jayway.android.robotium:robotium-solo:4.+'
   )
-
-  instrumentTestApk(
-    'com.google.android:support-v4:+',
-    'com.scurrilous:uritemplate:1.0',
-    'com.fasterxml.jackson.core:jackson-core:2.2.+'
-  )
 }
 
 android {
@@ -38,8 +32,4 @@ android {
   defaultConfig {
     testPackageName 'net.xaethos.android.halbrowser.tests'
   }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.6'
 }
