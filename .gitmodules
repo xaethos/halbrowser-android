@@ -4,3 +4,4 @@
 [submodule "submodules/cwac-merge"]
 	path = submodules/cwac-merge
 	url = git://github.com/HenriqueRocha/cwac-merge.git
+	ignore = untracked
