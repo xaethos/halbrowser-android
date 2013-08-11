@@ -1,6 +1,6 @@
-[submodule "submodules/halparser-android"]
-	path = submodules/halparser-android
-	url = git://github.com/xaethos/halparser-android.git
-[submodule "submodules/cwac-merge"]
-	path = submodules/cwac-merge
+[submodule "cwac-merge"]
+	path = cwac-merge
 	url = git://github.com/xaethos/cwac-merge.git
+[submodule "halparser-android"]
+	path = halparser-android
+	url = git://github.com/xaethos/halparser-android.git
