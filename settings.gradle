@@ -1,2 +1,2 @@
 include 'submodules:halparser-android'
-include 'submodules:cwac-merge'
+include 'submodules:cwac-merge:cwac-sacklist'
