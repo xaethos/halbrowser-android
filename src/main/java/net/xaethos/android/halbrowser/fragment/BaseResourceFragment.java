@@ -1,14 +1,5 @@
 package net.xaethos.android.halbrowser.fragment;
 
-import java.util.Map;
-
-import static net.xaethos.android.halbrowser.Relation.*;
-
-import net.xaethos.android.halbrowser.R;
-
-import net.xaethos.android.halbrowser.adapter.SimpleRepresentationAdapter;
-import net.xaethos.android.halparser.HALLink;
-import net.xaethos.android.halparser.HALResource;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -18,6 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
+
+import net.xaethos.android.halbrowser.R;
+import net.xaethos.android.halbrowser.adapter.SimpleRepresentationAdapter;
+import net.xaethos.android.halparser.HALLink;
+import net.xaethos.android.halparser.HALProperty;
+import net.xaethos.android.halparser.HALResource;
+
+import java.util.Collection;
+
+import static net.xaethos.android.halbrowser.Relation.CURIE;
+import static net.xaethos.android.halbrowser.Relation.PROFILE;
+import static net.xaethos.android.halbrowser.Relation.SELF;
 
 public class BaseResourceFragment extends ListFragment
         implements
@@ -112,15 +115,16 @@ public class BaseResourceFragment extends ListFragment
     }
 
     private void bindProperties(View view, HALResource resource) {
-        Map<String, Object> properties = resource.getProperties();
+        Collection<? extends HALProperty> properties = resource.getProperties().values();
 
         ViewGroup propertiesLayout = (ViewGroup) view.findViewById(R.id.properties_layout);
         LayoutInflater inflater = LayoutInflater.from(getActivity());
 
-        for (String name : properties.keySet()) {
+        for (HALProperty property : properties) {
+            String name = property.getName();
             View propertyView = getPropertyView(inflater, view, propertiesLayout, resource, name);
             if (propertyView != null) {
-                bindPropertyView(propertyView, resource, name, properties.get(name));
+                bindPropertyView(propertyView, resource, name, property.getValue());
                 if (propertyView.getParent() == null && propertiesLayout != null) {
                     propertiesLayout.addView(propertyView);
                 }
@@ -212,7 +216,7 @@ public class BaseResourceFragment extends ListFragment
 
         childView = linkView.findViewById(R.id.link_title);
         if (childView instanceof TextView) {
-            String title = (String) link.getAttribute("title");
+            String title = link.getTitle();
             if (TextUtils.isEmpty(title)) title = link.getRel();
             ((TextView) childView).setText(title);
         }
@@ -242,7 +246,7 @@ public class BaseResourceFragment extends ListFragment
 
         childView = resourceView.findViewById(R.id.link_title);
         if (childView instanceof TextView) {
-            String title = (String) link.getAttribute("title");
+            String title = link.getTitle();
             if (TextUtils.isEmpty(title)) title = rel;
             ((TextView) childView).setText(title);
         }

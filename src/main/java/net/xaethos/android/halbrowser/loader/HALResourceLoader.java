@@ -1,16 +1,17 @@
 package net.xaethos.android.halbrowser.loader;
 
+import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
+
+import net.xaethos.android.halparser.HALResource;
+import net.xaethos.android.halparser.serializers.HALJsonSerializer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-
-import net.xaethos.android.halparser.HALJsonParser;
-import net.xaethos.android.halparser.HALResource;
-import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 public class HALResourceLoader extends AsyncTaskLoader<HALResource>
 {
@@ -42,7 +43,7 @@ public class HALResourceLoader extends AsyncTaskLoader<HALResource>
                 return null;
             }
 
-            HALJsonParser parser = new HALJsonParser(mURI);
+            HALJsonSerializer parser = new HALJsonSerializer();
             InputStream in = conn.getInputStream();
 
             try {

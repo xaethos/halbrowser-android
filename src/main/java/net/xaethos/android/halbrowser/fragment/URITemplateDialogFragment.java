@@ -1,10 +1,5 @@
 package net.xaethos.android.halbrowser.fragment;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import net.xaethos.android.halparser.HALLink;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,6 +10,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import net.xaethos.android.halparser.HALLink;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class URITemplateDialogFragment extends DialogFragment implements DialogInterface.OnClickListener
 {
@@ -45,7 +46,7 @@ public class URITemplateDialogFragment extends DialogFragment implements DialogI
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         HALLink link = getArguments().getParcelable(ARG_LINK);
 
-        String title = (String) link.getAttribute("title");
+        String title = link.getTitle();
         if (TextUtils.isEmpty(title)) title = link.getRel();
 
         return new AlertDialog.Builder(getActivity()).setTitle(title)

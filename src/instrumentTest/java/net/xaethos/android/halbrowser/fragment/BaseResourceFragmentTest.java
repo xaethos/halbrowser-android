@@ -1,19 +1,22 @@
 package net.xaethos.android.halbrowser.fragment;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import java.io.InputStreamReader;
-import java.io.Reader;
-
-import net.xaethos.android.halbrowser.tests.R;
-import net.xaethos.android.halparser.HALJsonParser;
-import net.xaethos.android.halparser.HALResource;
-import net.xaethos.android.halparser.impl.BaseHALResource;
 import android.support.v4.app.ListFragment;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.jayway.android.robotium.solo.Solo;
+
+import net.xaethos.android.halbrowser.tests.R;
+import net.xaethos.android.halparser.HALResource;
+import net.xaethos.android.halparser.impl.BaseHALLink;
+import net.xaethos.android.halparser.impl.BaseHALResource;
+import net.xaethos.android.halparser.serializers.HALJsonSerializer;
+
+import java.io.InputStreamReader;
+import java.io.Reader;
+
+import static java.util.Collections.singletonMap;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class BaseResourceFragmentTest extends ActivityInstrumentationTestCase2<TestActivity>
 {
@@ -36,18 +39,10 @@ public class BaseResourceFragmentTest extends ActivityInstrumentationTestCase2<T
     }
 
     public void testPropertiesAndLinks() throws Exception {
-        BaseHALResource.Builder resourceBuilder = new BaseHALResource.Builder(null);
-        HALResource resource = resourceBuilder.putProperty("name", "John")
-                                              .putLink(resourceBuilder.buildLink()
-                                                                      .putAttribute("rel", "pet")
-                                                                      .putAttribute("href", "/pet/13")
-                                                                      .putAttribute("title", "Fido")
-                                                                      .build())
-                                              .putLink(resourceBuilder.buildLink()
-                                                                      .putAttribute("rel", "alternate")
-                                                                      .putAttribute("href", "/owner/42")
-                                                                      .build())
-                                              .build();
+        BaseHALResource resource = new BaseHALResource();
+        resource.setValue("name", "John");
+        resource.addLink(new BaseHALLink("pet", "/pet/13", singletonMap("title", "Fido")));
+        resource.addLink(new BaseHALLink("alternate", "/owner/42"));
 
         BaseResourceFragment.Builder builder = new BaseResourceFragment.Builder();
         ListFragment fragment = builder.setResource(resource).buildFragment(BaseResourceFragment.class);
@@ -63,7 +58,7 @@ public class BaseResourceFragmentTest extends ActivityInstrumentationTestCase2<T
     }
 
     public void testEmbeddedResources() throws Exception {
-        HALResource resource = new HALJsonParser("http://example.com").parse(newReader(R.raw.owner));
+        HALResource resource = new HALJsonSerializer().parse(newReader(R.raw.owner));
 
         BaseResourceFragment.Builder builder = new BaseResourceFragment.Builder();
         ListFragment fragment = builder.setResource(resource).buildFragment(BaseResourceFragment.class);

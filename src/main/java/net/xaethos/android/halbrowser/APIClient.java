@@ -1,11 +1,12 @@
 package net.xaethos.android.halbrowser;
 
-import java.net.URI;
+import android.content.Context;
+import android.support.v4.content.Loader;
 
 import net.xaethos.android.halbrowser.loader.HALResourceLoader;
 import net.xaethos.android.halparser.HALResource;
-import android.content.Context;
-import android.support.v4.content.Loader;
+
+import java.net.URI;
 
 public class APIClient
 {

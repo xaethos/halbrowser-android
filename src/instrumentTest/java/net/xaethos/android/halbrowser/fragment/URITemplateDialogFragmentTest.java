@@ -1,5 +1,6 @@
 package net.xaethos.android.halbrowser.fragment;
 
+import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
@@ -30,11 +31,7 @@ public class URITemplateDialogFragmentTest extends ActivityInstrumentationTestCa
     }
 
     public void testPropertiesAndLinks() throws Exception {
-        HALLink link = new BaseHALLink.Builder(null).putAttribute("rel", "search")
-                                                    .putAttribute("href", "/pet/{?search}")
-                                                    .putAttribute("title", "Search")
-                                                    .build();
-
+        HALLink link = new BaseHALLink("search", "/pet/{?search}", singletonMap("title", "Search"));
         URITemplateDialogFragment.forLink(link).show(activity.getSupportFragmentManager(), "uritemplate");
 
         assertThat(solo.searchText("Search"), is(true));

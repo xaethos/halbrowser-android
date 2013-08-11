@@ -1,12 +1,13 @@
 package net.xaethos.android.halbrowser.fragment;
 
-import java.util.Map;
-
-import net.xaethos.android.halparser.HALLink;
-import net.xaethos.android.halparser.HALResource;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import net.xaethos.android.halparser.HALLink;
+import net.xaethos.android.halparser.HALResource;
+
+import java.util.Map;
 
 public interface ResourceFragment
 {

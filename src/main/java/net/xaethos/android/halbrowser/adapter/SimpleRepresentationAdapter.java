@@ -1,15 +1,5 @@
 package net.xaethos.android.halbrowser.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import net.xaethos.android.halbrowser.R;
-import net.xaethos.android.halbrowser.Relation;
-import net.xaethos.android.halparser.HALLink;
-import net.xaethos.android.halparser.HALResource;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +14,17 @@ import com.commonsware.cwac.merge.MergeAdapter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import net.xaethos.android.halbrowser.R;
+import net.xaethos.android.halbrowser.Relation;
+import net.xaethos.android.halparser.HALLink;
+import net.xaethos.android.halparser.HALProperty;
+import net.xaethos.android.halparser.HALResource;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SimpleRepresentationAdapter extends MergeAdapter
 {
@@ -43,11 +44,11 @@ public class SimpleRepresentationAdapter extends MergeAdapter
         rels.addAll(resource.getLinkRels());
 
         List<Map<String, Object>> propertyData = Lists.newArrayList();
-        for (Entry<String, Object> entry : resource.getProperties().entrySet()) {
-            Map<String, Object> property = Maps.newHashMap();
-            property.put(NAME, entry.getKey());
-            property.put(VALUE, entry.getValue());
-            propertyData.add(property);
+        for (HALProperty property : resource.getProperties().values()) {
+            Map<String, Object> data = Maps.newHashMap();
+            data.put(NAME, property.getName());
+            data.put(VALUE, property.getValue());
+            propertyData.add(data);
         }
         if (!propertyData.isEmpty()) {
             addAdapter(new PropertyAdapter(context, propertyData));
@@ -107,7 +108,8 @@ public class SimpleRepresentationAdapter extends MergeAdapter
             LinearLayout innerLayout = (LinearLayout) layout.findViewById(R.id.properties);
 
             innerLayout.removeAllViews();
-            for (Object value : resource.getProperties().values()) {
+            for (HALProperty property : resource.getProperties().values()) {
+                Object value = property.getValue();
                 if (value == null) continue;
                 TextView tv = new TextView(getContext());
                 tv.setText(value.toString());
