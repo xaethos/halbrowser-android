@@ -22,6 +22,7 @@ import net.xaethos.android.halparser.HALProperty;
 import net.xaethos.android.halparser.HALResource;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class SimpleRepresentationAdapter extends MergeAdapter
         rels.addAll(resource.getLinkRels());
 
         List<Map<String, Object>> propertyData = Lists.newArrayList();
-        for (HALProperty property : resource.getProperties().values()) {
+        for (HALProperty property : resource.getProperties()) {
             Map<String, Object> data = Maps.newHashMap();
             data.put(NAME, property.getName());
             data.put(VALUE, property.getValue());
@@ -63,7 +64,7 @@ public class SimpleRepresentationAdapter extends MergeAdapter
                 addAdapter(new ResourceAdapter(context, resources));
             }
 
-            List<HALLink> links = resource.getLinks(rel);
+            Collection<HALLink> links = resource.getLinks(rel);
             if (links != null && !links.isEmpty()) {
                 addAdapter(LinkAdapter.forLinks(context, links));
             }
@@ -108,7 +109,7 @@ public class SimpleRepresentationAdapter extends MergeAdapter
             LinearLayout innerLayout = (LinearLayout) layout.findViewById(R.id.properties);
 
             innerLayout.removeAllViews();
-            for (HALProperty property : resource.getProperties().values()) {
+            for (HALProperty property : resource.getProperties()) {
                 Object value = property.getValue();
                 if (value == null) continue;
                 TextView tv = new TextView(getContext());
@@ -123,7 +124,7 @@ public class SimpleRepresentationAdapter extends MergeAdapter
 
     static class LinkAdapter extends ArrayAdapter<HALLink>
     {
-        public static LinkAdapter forLinks(Context context, List<HALLink> links) {
+        public static LinkAdapter forLinks(Context context, Collection<HALLink> links) {
             List<HALLink> viewableLinks = new ArrayList<HALLink>();
             for (HALLink link : links) {
                 if (link.getTitle() != null) viewableLinks.add(link);
