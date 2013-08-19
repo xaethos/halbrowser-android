@@ -1,14 +1,16 @@
 package net.xaethos.android.halbrowser.fragment;
 
+import android.test.ActivityInstrumentationTestCase2;
+
+import com.jayway.android.robotium.solo.Solo;
+
+import net.xaethos.android.halparser.HALLink;
+import net.xaethos.android.halparser.impl.BaseHALLink;
+
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
-import net.xaethos.android.halparser.HALLink;
-import net.xaethos.android.halparser.impl.BaseHALLink;
-import android.test.ActivityInstrumentationTestCase2;
-
-import com.jayway.android.robotium.solo.Solo;
 
 public class URITemplateDialogFragmentTest extends ActivityInstrumentationTestCase2<TestActivity>
 {

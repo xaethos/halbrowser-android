@@ -1,7 +1,5 @@
 package net.xaethos.android.test;
 
-import java.util.concurrent.ArrayBlockingQueue;
-
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -10,6 +8,8 @@ import android.os.Message;
 import android.support.v4.content.Loader;
 import android.support.v4.content.Loader.OnLoadCompleteListener;
 import android.test.AndroidTestCase;
+
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * A convenience class for testing {@link Loader}s. This test case

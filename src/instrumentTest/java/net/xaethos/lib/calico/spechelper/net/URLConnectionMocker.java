@@ -1,5 +1,8 @@
 package net.xaethos.lib.calico.spechelper.net;
 
+import android.app.Instrumentation;
+import android.content.res.Resources;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -12,9 +15,6 @@ import java.net.URLStreamHandlerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-
-import android.app.Instrumentation;
-import android.content.res.Resources;
 
 public class URLConnectionMocker extends URLStreamHandler
     implements
