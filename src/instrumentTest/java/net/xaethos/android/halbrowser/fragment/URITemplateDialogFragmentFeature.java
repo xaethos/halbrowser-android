@@ -12,13 +12,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 
-public class URITemplateDialogFragmentTest extends ActivityInstrumentationTestCase2<TestActivity>
+public class URITemplateDialogFragmentFeature extends ActivityInstrumentationTestCase2<TestActivity>
 {
 
     TestActivity activity;
     Solo solo;
 
-    public URITemplateDialogFragmentTest() {
+    public URITemplateDialogFragmentFeature() {
         super(TestActivity.class);
     }
 
