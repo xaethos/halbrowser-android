@@ -61,7 +61,7 @@ public class BaseResourceFragmentTest extends InstrumentationTestCase
         fragment.setResource(resource);
 
         fragment.view = basicView();
-        fragment.onViewCreated(null, null);
+        fragment.onViewCreated(fragment.view, null);
         assertTrue(fragment.handledProperties.containsAll(resource.getProperties()));
     }
 
