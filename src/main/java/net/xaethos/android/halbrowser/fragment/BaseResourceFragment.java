@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.xaethos.android.halparser.HALLink;
 import net.xaethos.android.halparser.HALProperty;
 import net.xaethos.android.halparser.HALResource;
 
@@ -82,11 +83,24 @@ public abstract class BaseResourceFragment extends Fragment
         if (root == null || resource == null) return;
 
         for (HALProperty property : resource.getProperties()) {
-            onHandleProperty(resource, property);
+            onBindProperty(resource, property);
         }
 
+        for (String rel : resource.getLinkRels()) {
+            for (HALLink link : resource.getLinks(rel)) {
+                onBindLink(resource, link);
+            }
+        }
+
+        for (String rel : resource.getResourceRels()) {
+            for (HALResource embedded : resource.getResources(rel)) {
+                onBindEmbedded(resource, embedded, rel);
+            }
+        }
     }
 
-    protected abstract boolean onHandleProperty(HALResource resource, HALProperty property);
+    protected abstract boolean onBindProperty(HALResource resource, HALProperty property);
+    protected abstract boolean onBindLink(HALResource resource, HALLink link);
+    protected abstract boolean onBindEmbedded(HALResource resource, HALResource embedded, String rel);
 
 }

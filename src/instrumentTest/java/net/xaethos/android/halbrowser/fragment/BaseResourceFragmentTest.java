@@ -5,6 +5,7 @@ import android.test.InstrumentationTestCase;
 import android.view.View;
 
 import net.xaethos.android.halbrowser.tests.R;
+import net.xaethos.android.halparser.HALLink;
 import net.xaethos.android.halparser.HALProperty;
 import net.xaethos.android.halparser.HALResource;
 import net.xaethos.android.halparser.impl.BaseHALResource;
@@ -56,23 +57,31 @@ public class BaseResourceFragmentTest extends InstrumentationTestCase
         assertThat(restoredFragment.getResource().getValueString("age"), is("33"));
     }
 
-    public void testOnHandlePropertyIsCalledOnViewCreated() throws Exception {
+    public void testOnViewCreatedBindsResource() throws Exception {
         resource = newResource(R.raw.owner);
         fragment.setResource(resource);
 
         fragment.view = basicView();
         fragment.onViewCreated(fragment.view, null);
-        assertTrue(fragment.handledProperties.containsAll(resource.getProperties()));
+        assertTrue(fragment.boundProperties.containsAll(resource.getProperties()));
+
+        for (String rel : resource.getLinkRels()) {
+            assertTrue(fragment.boundLink.containsAll(resource.getLinks(rel)));
+        }
+
+        for (String rel : resource.getResourceRels()) {
+            assertTrue(fragment.boundEmbedded.containsAll(resource.getResources(rel)));
+        }
     }
 
-    public void testWhenViewCreatedOnHandlePropertyIsCalledOnSetResource() throws Exception {
+    public void testWhenViewExistsSetResourceBindsResource() throws Exception {
         resource = newResource(R.raw.owner);
 
         fragment.view = basicView();
 
-        assertThat(fragment.handledProperties, is(empty()));
+        assertThat(fragment.boundProperties, is(empty()));
         fragment.setResource(resource);
-        assertTrue(fragment.handledProperties.containsAll(resource.getProperties()));
+        assertTrue(fragment.boundProperties.containsAll(resource.getProperties()));
     }
 
     // *** Helpers
@@ -91,12 +100,26 @@ public class BaseResourceFragmentTest extends InstrumentationTestCase
 
     class TestResourceFragment extends BaseResourceFragment {
 
-        public Collection<HALProperty> handledProperties = new ArrayList<HALProperty>();
         public View view;
+        public Collection<HALProperty> boundProperties = new ArrayList<HALProperty>();
+        public Collection<HALLink> boundLink = new ArrayList<HALLink>();
+        public Collection<HALResource> boundEmbedded = new ArrayList<HALResource>();
 
         @Override
-        protected boolean onHandleProperty(HALResource resource, HALProperty property) {
-            handledProperties.add(property);
+        protected boolean onBindProperty(HALResource resource, HALProperty property) {
+            boundProperties.add(property);
+            return false;
+        }
+
+        @Override
+        protected boolean onBindLink(HALResource resource, HALLink link) {
+            boundLink.add(link);
+            return false;
+        }
+
+        @Override
+        protected boolean onBindEmbedded(HALResource resource, HALResource embedded, String rel) {
+            boundEmbedded.add(embedded);
             return false;
         }
 
