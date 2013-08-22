@@ -1,4 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resource href="http://example.com/profile/sample"
           layout="@layout/sample_resource">
+
+    <property name="name"
+              layout="@layout/sample_property"
+              container="@id/properties_container"
+              labelView="@id/property_name"
+              contentView="@id/property_value"/>
 
 </resource>

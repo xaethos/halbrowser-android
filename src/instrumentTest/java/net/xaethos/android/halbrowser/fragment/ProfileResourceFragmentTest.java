@@ -69,7 +69,7 @@ public class ProfileResourceFragmentTest extends InstrumentationTestCase
     }
 
     private ResourceConfiguration inflateConfiguration(int resId) {
-        return new ProfileInflater(getTargetContext()).inflate(resId);
+        return new ProfileInflater().inflate(getTargetContext(), resId);
     }
 
     private void loadConfiguration(int resId) {
