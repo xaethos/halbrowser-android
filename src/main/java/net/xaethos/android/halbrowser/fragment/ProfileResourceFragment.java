@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import net.xaethos.android.halbrowser.profile.LinkConfiguration;
 import net.xaethos.android.halbrowser.profile.PropertyConfiguration;
 import net.xaethos.android.halbrowser.profile.ResourceConfiguration;
 import net.xaethos.android.halparser.HALLink;
@@ -83,7 +84,32 @@ public class ProfileResourceFragment extends BaseResourceFragment {
 
     @Override
     protected boolean onBindLink(View root, HALResource resource, HALLink link) {
-        return false;
+        ResourceConfiguration profile = getConfiguration();
+        String rel = link.getRel();
+        Object nameObj = link.getAttribute("name");
+        String name = nameObj == null ? null : nameObj.toString();
+        LinkConfiguration config;
+
+        config = profile.getLinkConfiguration(rel, name);
+        if (config == null) config = profile.getDefaultLinkConfiguration();
+        if (config == null) return false;
+
+        ViewGroup container = (ViewGroup) root.findViewById(config.getContainerId());
+        if (container != null) {
+            root = container;
+            if (config.getLayoutRes() > 0) {
+                View layout = getActivity().getLayoutInflater().inflate(config.getLayoutRes(), container, false);
+                container.addView(layout);
+                root = layout;
+            }
+        }
+
+        View view = root.findViewById(config.getLabelId());
+        if (view != null && view instanceof TextView) {
+            String title = link.getTitle();
+            ((TextView) view).setText(title == null ? rel : title);
+        }
+        return true;
     }
 
     @Override

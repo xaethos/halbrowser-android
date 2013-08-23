@@ -5,6 +5,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,8 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
-public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase2<TestActivity>
-{
+public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase2<TestActivity> {
     ProfileResourceFragment fragment;
     ResourceConfiguration config;
     HALResource resource;
@@ -83,6 +83,31 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
 
         TextView tv = (TextView) propertiesContainer.findViewById(android.R.id.text1);
         assertThat(tv.getText().toString(), is("33"));
+    }
+
+    public void testLinkConfiguration() throws Exception {
+        loadConfiguration(R.xml.profile_with_link);
+        getActivity().loadFragment(fragment);
+        getInstrumentation().waitForIdleSync();
+
+        View root = fragment.getView();
+        ViewGroup container;
+        Button button = (Button) root.findViewById(R.id.link_wiki_main);
+        assertThat(button.getText().toString(), is("Jon Arbuckle"));
+
+        container = (ViewGroup) root.findViewById(R.id.links_wiki_container);
+        assertThat(container.getChildCount(), is(2));
+        button = (Button) container.getChildAt(0);
+        assertThat(button.getText().toString(), is("Garfield"));
+        button = (Button) container.getChildAt(1);
+        assertThat(button.getText().toString(), is("Dr. Liz Wilson"));
+
+        container = (ViewGroup) root.findViewById(R.id.links_container);
+        assertThat(container.getChildCount(), is(2));
+        button = (Button) container.getChildAt(0);
+        assertThat(button.getText().toString(), is("self"));
+        button = (Button) container.getChildAt(1);
+        assertThat(button.getText().toString(), is("alternate"));
     }
 
     // *** Helpers
