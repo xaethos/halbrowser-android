@@ -5,6 +5,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.xaethos.android.halbrowser.profile.ProfileInflater;
@@ -42,7 +43,7 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
     }
 
     public void testConfigurationAccessors() throws Exception {
-        config = inflateConfiguration(R.xml.profile_sample);
+        config = inflateConfiguration(R.xml.profile_with_property);
         fragment.setConfiguration(config);
         assertThat(fragment.getConfiguration(), is(sameInstance(config)));
         fragment.setConfiguration(null);
@@ -50,13 +51,13 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
     }
 
     public void testOnCreateViewLoadConfigurationView() throws Exception {
-        loadConfiguration(R.xml.profile_sample);
+        loadConfiguration(R.xml.profile_with_property);
         View root = fragment.onCreateView(getLayoutInflater(), null, null);
-        assertThat(root.findViewById(R.id.resource_title), is(instanceOf(TextView.class)));
+        assertThat(root.findViewById(R.id.properties_container), is(instanceOf(LinearLayout.class)));
     }
 
     public void testPropertyConfiguration() throws Exception {
-        loadConfiguration(R.xml.profile_sample);
+        loadConfiguration(R.xml.profile_with_property);
         getActivity().loadFragment(fragment);
         getInstrumentation().waitForIdleSync();
 

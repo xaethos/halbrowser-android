@@ -25,12 +25,12 @@ public class ProfileInflaterTest extends InstrumentationTestCase {
     }
 
     public void testResourceAttributeInflating() {
-        ResourceConfiguration config = inflater.inflate(context, R.xml.profile_sample);
-        assertThat(config.getLayoutRes(), is(R.layout.sample_resource));
+        ResourceConfiguration config = inflater.inflate(context, R.xml.profile_with_property);
+        assertThat(config.getLayoutRes(), is(R.layout.resource_with_properties_container));
     }
 
     public void testPropertyAttributeInflating() {
-        ResourceConfiguration profile = inflater.inflate(context, R.xml.profile_sample);
+        ResourceConfiguration profile = inflater.inflate(context, R.xml.profile_with_property);
 
         assertThat(profile.hasPropertyConfiguration("blahblah"), is(false));
         assertThat(profile.getPropertyConfiguration("blahblah"), is(nullValue()));
@@ -39,7 +39,7 @@ public class ProfileInflaterTest extends InstrumentationTestCase {
         PropertyConfiguration config = profile.getPropertyConfiguration("name");
         assertThat(config, is(not(nullValue())));
 
-        assertThat(config.getLayoutRes(), is(R.layout.sample_property));
+        assertThat(config.getLayoutRes(), is(R.layout.property_with_label));
         assertThat(config.getContainerId(), is(R.id.properties_container));
         assertThat(config.getLabelId(), is(R.id.property_name));
         assertThat(config.getContentId(), is(R.id.property_value));
