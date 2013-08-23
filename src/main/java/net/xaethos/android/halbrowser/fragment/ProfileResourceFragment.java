@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import net.xaethos.android.halbrowser.profile.PropertyConfiguration;
 import net.xaethos.android.halbrowser.profile.ResourceConfiguration;
 import net.xaethos.android.halparser.HALLink;
 import net.xaethos.android.halparser.HALProperty;
@@ -41,17 +43,44 @@ public class ProfileResourceFragment extends BaseResourceFragment {
     // *** Resource binding
 
     @Override
-    protected boolean onBindProperty(HALResource resource, HALProperty property) {
+    protected boolean onBindProperty(View root, HALResource resource, HALProperty property) {
+        ResourceConfiguration profile = getConfiguration();
+        if (!profile.hasPropertyConfiguration(property.getName())) return false;
+
+        PropertyConfiguration config = profile.getPropertyConfiguration(property.getName());
+
+        ViewGroup container = (ViewGroup) root.findViewById(config.getContainerId());
+        if (container != null) {
+            root = container;
+            if (config.getLayoutRes() > 0) {
+                View layout = getActivity().getLayoutInflater().inflate(config.getLayoutRes(), container, false);
+                container.addView(layout);
+                root = layout;
+            }
+        }
+
+        View view;
+        view = root.findViewById(config.getLabelId());
+        if (view != null && view instanceof TextView) {
+            ((TextView) view).setText(property.getName());
+        }
+        view = root.findViewById(config.getContentId());
+        if (view != null && view instanceof TextView) {
+            Object value = property.getValue();
+            if (value != null) {
+                ((TextView) view).setText(value.toString());
+            }
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean onBindLink(View root, HALResource resource, HALLink link) {
         return false;
     }
 
     @Override
-    protected boolean onBindLink(HALResource resource, HALLink link) {
-        return false;
-    }
-
-    @Override
-    protected boolean onBindEmbedded(HALResource resource, HALResource embedded, String rel) {
+    protected boolean onBindEmbedded(View root, HALResource resource, HALResource embedded, String rel) {
         return false;
     }
 

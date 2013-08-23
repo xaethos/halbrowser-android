@@ -83,24 +83,24 @@ public abstract class BaseResourceFragment extends Fragment
         if (root == null || resource == null) return;
 
         for (HALProperty property : resource.getProperties()) {
-            onBindProperty(resource, property);
+            onBindProperty(root, resource, property);
         }
 
         for (String rel : resource.getLinkRels()) {
             for (HALLink link : resource.getLinks(rel)) {
-                onBindLink(resource, link);
+                onBindLink(root, resource, link);
             }
         }
 
         for (String rel : resource.getResourceRels()) {
             for (HALResource embedded : resource.getResources(rel)) {
-                onBindEmbedded(resource, embedded, rel);
+                onBindEmbedded(root, resource, embedded, rel);
             }
         }
     }
 
-    protected abstract boolean onBindProperty(HALResource resource, HALProperty property);
-    protected abstract boolean onBindLink(HALResource resource, HALLink link);
-    protected abstract boolean onBindEmbedded(HALResource resource, HALResource embedded, String rel);
+    protected abstract boolean onBindProperty(View root, HALResource resource, HALProperty property);
+    protected abstract boolean onBindLink(View root, HALResource resource, HALLink link);
+    protected abstract boolean onBindEmbedded(View root, HALResource resource, HALResource embedded, String rel);
 
 }

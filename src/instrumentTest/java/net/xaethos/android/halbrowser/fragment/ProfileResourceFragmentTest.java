@@ -1,9 +1,10 @@
 package net.xaethos.android.halbrowser.fragment;
 
 import android.content.Context;
-import android.test.InstrumentationTestCase;
+import android.test.ActivityInstrumentationTestCase2;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.xaethos.android.halbrowser.profile.ProfileInflater;
@@ -21,11 +22,15 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
-public class ProfileResourceFragmentTest extends InstrumentationTestCase
+public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase2<TestActivity>
 {
     ProfileResourceFragment fragment;
     ResourceConfiguration config;
     HALResource resource;
+
+    public ProfileResourceFragmentTest() {
+        super(TestActivity.class);
+    }
 
     @Override
     protected void setUp() throws Exception {
@@ -48,6 +53,22 @@ public class ProfileResourceFragmentTest extends InstrumentationTestCase
         loadConfiguration(R.xml.profile_sample);
         View root = fragment.onCreateView(getLayoutInflater(), null, null);
         assertThat(root.findViewById(R.id.resource_title), is(instanceOf(TextView.class)));
+    }
+
+    public void testPropertyConfiguration() throws Exception {
+        loadConfiguration(R.xml.profile_sample);
+        getActivity().loadFragment(fragment);
+        getInstrumentation().waitForIdleSync();
+
+        View root = fragment.getView();
+        ViewGroup propertiesContainer = (ViewGroup) root.findViewById(R.id.properties_container);
+        assertThat(propertiesContainer.getChildCount(), is(1));
+
+        TextView tv = (TextView) propertiesContainer.findViewById(R.id.property_name);
+        assertThat(tv.getText().toString(), is("name"));
+
+        tv = (TextView) propertiesContainer.findViewById(R.id.property_value);
+        assertThat(tv.getText().toString(), is("John"));
     }
 
     // *** Helpers

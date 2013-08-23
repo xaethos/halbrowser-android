@@ -106,19 +106,19 @@ public class BaseResourceFragmentTest extends InstrumentationTestCase
         public Collection<HALResource> boundEmbedded = new ArrayList<HALResource>();
 
         @Override
-        protected boolean onBindProperty(HALResource resource, HALProperty property) {
+        protected boolean onBindProperty(View root, HALResource resource, HALProperty property) {
             boundProperties.add(property);
             return false;
         }
 
         @Override
-        protected boolean onBindLink(HALResource resource, HALLink link) {
+        protected boolean onBindLink(View root, HALResource resource, HALLink link) {
             boundLink.add(link);
             return false;
         }
 
         @Override
-        protected boolean onBindEmbedded(HALResource resource, HALResource embedded, String rel) {
+        protected boolean onBindEmbedded(View root, HALResource resource, HALResource embedded, String rel) {
             boundEmbedded.add(embedded);
             return false;
         }
