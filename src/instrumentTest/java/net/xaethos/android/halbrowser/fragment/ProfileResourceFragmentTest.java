@@ -72,6 +72,19 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
         assertThat(tv.getText().toString(), is("John"));
     }
 
+    public void testDefaultPropertyConfiguration() throws Exception {
+        loadConfiguration(R.xml.profile_with_default_property);
+        getActivity().loadFragment(fragment);
+        getInstrumentation().waitForIdleSync();
+
+        View root = fragment.getView();
+        ViewGroup propertiesContainer = (ViewGroup) root.findViewById(R.id.properties_container);
+        assertThat(propertiesContainer.getChildCount(), is(1));
+
+        TextView tv = (TextView) propertiesContainer.findViewById(android.R.id.text1);
+        assertThat(tv.getText().toString(), is("33"));
+    }
+
     // *** Helpers
 
     protected Context getTargetContext() {

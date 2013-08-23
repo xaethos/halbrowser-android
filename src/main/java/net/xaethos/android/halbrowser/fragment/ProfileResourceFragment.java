@@ -44,10 +44,17 @@ public class ProfileResourceFragment extends BaseResourceFragment {
 
     @Override
     protected boolean onBindProperty(View root, HALResource resource, HALProperty property) {
+        String propertyName = property.getName();
         ResourceConfiguration profile = getConfiguration();
-        if (!profile.hasPropertyConfiguration(property.getName())) return false;
+        PropertyConfiguration config;
 
-        PropertyConfiguration config = profile.getPropertyConfiguration(property.getName());
+        if (profile.hasPropertyConfiguration(propertyName)) {
+            config = profile.getPropertyConfiguration(propertyName);
+        } else {
+            config = profile.getDefaultPropertyConfiguration();
+        }
+
+        if (config == null) return false;
 
         ViewGroup container = (ViewGroup) root.findViewById(config.getContainerId());
         if (container != null) {
@@ -62,7 +69,7 @@ public class ProfileResourceFragment extends BaseResourceFragment {
         View view;
         view = root.findViewById(config.getLabelId());
         if (view != null && view instanceof TextView) {
-            ((TextView) view).setText(property.getName());
+            ((TextView) view).setText(propertyName);
         }
         view = root.findViewById(config.getContentId());
         if (view != null && view instanceof TextView) {
