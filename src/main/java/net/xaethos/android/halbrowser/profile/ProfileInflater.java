@@ -34,7 +34,11 @@ public class ProfileInflater {
         ResourceConfigurationImpl config = new ResourceConfigurationImpl(Xml.asAttributeSet(parser));
 
         while (nextTagEvent(parser) == START_TAG) {
-            config.addPropertyConfiguration(inflateProperty(parser));
+            if ("defaultProperty".equals(parser.getName())) {
+                config.setDefaultPropertyConfiguration(inflateProperty(parser));
+            } else {
+                config.addPropertyConfiguration(inflateProperty(parser));
+            }
         }
 
         return config;
@@ -62,6 +66,7 @@ public class ProfileInflater {
     private class ResourceConfigurationImpl implements ResourceConfiguration {
 
         private int mLayoutRes;
+        private PropertyConfiguration mDefaultPropertyConfig;
         private HashMap<String, PropertyConfiguration> mPropertyConfigMap;
 
         public ResourceConfigurationImpl(AttributeSet attrs) {
@@ -97,6 +102,14 @@ public class ProfileInflater {
             return Collections.unmodifiableCollection(mPropertyConfigMap.values());
         }
 
+        @Override
+        public PropertyConfiguration getDefaultPropertyConfiguration() {
+            return mDefaultPropertyConfig;
+        }
+
+        public void setDefaultPropertyConfiguration(PropertyConfiguration config) {
+            mDefaultPropertyConfig = config;
+        }
     }
 
     private class PropertyConfigurationImpl implements PropertyConfiguration {

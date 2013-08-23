@@ -9,4 +9,6 @@ public interface ResourceConfiguration {
     boolean hasPropertyConfiguration(String name);
     PropertyConfiguration getPropertyConfiguration(String name);
     Collection<PropertyConfiguration> getPropertyConfigurations();
+
+    PropertyConfiguration getDefaultPropertyConfiguration();
 }
