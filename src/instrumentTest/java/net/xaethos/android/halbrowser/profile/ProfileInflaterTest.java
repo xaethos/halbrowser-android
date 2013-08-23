@@ -10,7 +10,9 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 
 public class ProfileInflaterTest extends InstrumentationTestCase {
 
@@ -64,6 +66,29 @@ public class ProfileInflaterTest extends InstrumentationTestCase {
         assertThat(config.getContentId(), is(android.R.id.text1));
 
         assertThat(profile.getPropertyConfigurations(), not(hasItem(config)));
+    }
+
+    public void testLinkAttributeInflating() {
+        ResourceConfiguration profile = inflater.inflate(context, R.xml.profile_with_link);
+        LinkConfiguration config;
+
+        config = profile.getDefaultLinkConfiguration();
+        assertThat(config.getContainerId(), is(R.id.links_container));
+
+        assertThat(profile.getLinkConfiguration("foo", null), is(nullValue()));
+        assertThat(profile.getLinkConfiguration("foo", "bar"), is(nullValue()));
+
+        config = profile.getLinkConfiguration("wiki", "main");
+        assertThat(config, is(notNullValue()));
+        assertThat(config.getLabelId(), is(R.id.link_wiki_main));
+
+        config = profile.getLinkConfiguration("wiki", null);
+        assertThat(config, is(notNullValue()));
+        assertThat(config.getLabelId(), is(R.id.link_button));
+        assertThat(config.getLayoutRes(), is(R.layout.link_button));
+        assertThat(config.getContainerId(), is(R.id.links_wiki_container));
+
+        assertThat(profile.getLinkConfiguration("wiki", "blah"), is(sameInstance(config)));
     }
 
 }

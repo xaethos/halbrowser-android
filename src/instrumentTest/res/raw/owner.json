@@ -1,12 +1,12 @@
 {
   "_links" : {
-    "self" : {
-      "href" : "/user/123456",
-      "title" : "John in Title"
-    },
-    "alternate" : {
-      "href" : "/owner/145135"
-    }
+    "self" : { "href" : "/user/123456" },
+    "alternate" : { "href" : "/owner/145135" },
+    "wiki" : [
+      { "href" : "http://en.wikipedia.org/wiki/Jon_Arbuckle", "title" : "Jon Arbuckle", "name" : "main" },
+      { "href" : "http://en.wikipedia.org/wiki/Garfield", "title" : "Garfield", "name" : "series" },
+      { "href" : "http://en.wikipedia.org/wiki/Garfield#Dr._Liz_Wilson", "title" : "Dr. Liz Wilson" }
+    ]
   },
   "name" : "John",
   "age" : 33,

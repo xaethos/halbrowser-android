@@ -34,10 +34,17 @@ public class ProfileInflater {
         ResourceConfigurationImpl config = new ResourceConfigurationImpl(Xml.asAttributeSet(parser));
 
         while (nextTagEvent(parser) == START_TAG) {
-            if ("defaultProperty".equals(parser.getName())) {
+            String name = parser.getName();
+            if ("defaultProperty".equals(name)) {
                 config.setDefaultPropertyConfiguration(inflateProperty(parser));
-            } else {
+            } else if ("property".equals(name)) {
                 config.addPropertyConfiguration(inflateProperty(parser));
+            } else if ("defaultLink".equals(name)) {
+                config.setDefaultLinkConfiguration(inflateLink(parser));
+            } else if ("link".equals(name)) {
+                config.addLinkConfiguration(inflateLink(parser));
+            } else {
+                throw new XmlPullParserException("Unexpected element: " + name); // TODO: XML schema
             }
         }
 
@@ -46,8 +53,17 @@ public class ProfileInflater {
 
     private PropertyConfiguration inflateProperty(XmlPullParser parser) throws IOException, XmlPullParserException {
         PropertyConfiguration config = new PropertyConfigurationImpl(Xml.asAttributeSet(parser));
-        if (nextTagEvent(parser) != END_TAG)
+        if (nextTagEvent(parser) != END_TAG) {
             throw new XmlPullParserException("Tag nested in property"); // TODO: XML schema
+        }
+        return config;
+    }
+
+    private LinkConfiguration inflateLink(XmlPullParser parser) throws IOException, XmlPullParserException {
+        LinkConfiguration config = new LinkConfigurationImpl(Xml.asAttributeSet(parser));
+        if (nextTagEvent(parser) != END_TAG) {
+            throw new XmlPullParserException("Tag nested in property"); // TODO: XML schema
+        }
         return config;
     }
 
@@ -68,6 +84,8 @@ public class ProfileInflater {
         private int mLayoutRes;
         private PropertyConfiguration mDefaultPropertyConfig;
         private HashMap<String, PropertyConfiguration> mPropertyConfigMap;
+        private LinkConfiguration mDefaultLinkConfig;
+        private HashMap<String, HashMap<String, LinkConfiguration>> mLinksConfigMap;
 
         public ResourceConfigurationImpl(AttributeSet attrs) {
             int count = attrs.getAttributeCount();
@@ -76,6 +94,7 @@ public class ProfileInflater {
                 if ("layout".equals(name)) mLayoutRes = attrs.getAttributeResourceValue(i, 0);
             }
             mPropertyConfigMap = new HashMap<String, PropertyConfiguration>();
+            mLinksConfigMap = new HashMap<String, HashMap<String, LinkConfiguration>>();
         }
 
         @Override
@@ -110,6 +129,36 @@ public class ProfileInflater {
         public void setDefaultPropertyConfiguration(PropertyConfiguration config) {
             mDefaultPropertyConfig = config;
         }
+
+        public void addLinkConfiguration(LinkConfiguration config) {
+            String rel = config.getRel();
+
+            HashMap<String, LinkConfiguration> nameMap = mLinksConfigMap.get(rel);
+            if (nameMap == null) {
+                nameMap = new HashMap<String, LinkConfiguration>();
+                mLinksConfigMap.put(rel, nameMap);
+            }
+            nameMap.put(config.getName(), config);
+        }
+
+        @Override
+        public LinkConfiguration getLinkConfiguration(String rel, String name) {
+            HashMap<String, LinkConfiguration> nameMap = mLinksConfigMap.get(rel);
+            if (nameMap == null) return null;
+            LinkConfiguration config = nameMap.get(name);
+            if (config != null) return config;
+            return nameMap.get(null);
+        }
+
+        @Override
+        public LinkConfiguration getDefaultLinkConfiguration() {
+            return mDefaultLinkConfig;
+        }
+
+        public void setDefaultLinkConfiguration(LinkConfiguration config) {
+            mDefaultLinkConfig = config;
+        }
+
     }
 
     private class PropertyConfigurationImpl implements PropertyConfiguration {
@@ -157,6 +206,53 @@ public class ProfileInflater {
         @Override
         public int getContentId() {
             return mContentId;
+        }
+    }
+
+    private class LinkConfigurationImpl implements LinkConfiguration {
+
+        private String mRel;
+        private String mName;
+        private int mLayoutRes;
+        private int mContainerId;
+        private int mLabelId;
+
+        public LinkConfigurationImpl(AttributeSet attrs) {
+            int count = attrs.getAttributeCount();
+            for (int i = 0; i < count; ++i) {
+                String name = attrs.getAttributeName(i);
+                if ("rel".equals(name)) mRel = attrs.getAttributeValue(i);
+                else if ("name".equals(name)) mName = attrs.getAttributeValue(i);
+                else if ("layout".equals(name)) mLayoutRes = attrs.getAttributeResourceValue(i, 0);
+                else if ("container".equals(name))
+                    mContainerId = attrs.getAttributeResourceValue(i, 0);
+                else if ("labelView".equals(name)) mLabelId = attrs.getAttributeResourceValue(i, 0);
+            }
+        }
+
+        @Override
+        public String getRel() {
+            return mRel;
+        }
+
+        @Override
+        public String getName() {
+            return mName;
+        }
+
+        @Override
+        public int getLayoutRes() {
+            return mLayoutRes;
+        }
+
+        @Override
+        public int getContainerId() {
+            return mContainerId;
+        }
+
+        @Override
+        public int getLabelId() {
+            return mLabelId;
         }
     }
 

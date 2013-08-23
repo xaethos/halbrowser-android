@@ -9,6 +9,9 @@ public interface ResourceConfiguration {
     boolean hasPropertyConfiguration(String name);
     PropertyConfiguration getPropertyConfiguration(String name);
     Collection<PropertyConfiguration> getPropertyConfigurations();
-
     PropertyConfiguration getDefaultPropertyConfiguration();
+
+    LinkConfiguration getLinkConfiguration(String rel, String name);
+    LinkConfiguration getDefaultLinkConfiguration();
+
 }
