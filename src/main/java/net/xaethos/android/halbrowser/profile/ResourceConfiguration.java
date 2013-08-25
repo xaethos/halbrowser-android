@@ -4,7 +4,10 @@ import java.util.Collection;
 
 public interface ResourceConfiguration {
 
+    public String getRel();
+
     public int getLayoutRes();
+    public int getContainerId();
 
     boolean hasPropertyConfiguration(String name);
     PropertyConfiguration getPropertyConfiguration(String name);
@@ -13,5 +16,8 @@ public interface ResourceConfiguration {
 
     LinkConfiguration getLinkConfiguration(String rel, String name);
     LinkConfiguration getDefaultLinkConfiguration();
+
+    ResourceConfiguration getResourceConfiguration(String rel);
+    ResourceConfiguration getDefaultResourceConfiguration();
 
 }

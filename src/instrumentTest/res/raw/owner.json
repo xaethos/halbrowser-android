@@ -14,22 +14,14 @@
     "pet" : [
       {
         "_links" : {
-          "self" : {
-            "href" : "/pet/321",
-            "title" : "Odis"
-          },
-          "toys" : {
-            "href" : "/pet/321/toys",
-            "title" : "Toys"
-          }
+          "self" : { "href" : "/pet/321", "title" : "Odis" },
+          "toys" : { "href" : "/pet/321/toys", "title" : "Toys" }
         },
         "type" : "Dog"
       },
       {
         "_links" : {
-          "self" : {
-            "href" : "/pet/456"
-          }
+          "self" : { "href" : "/pet/456" }
         },
         "name" : "Garfield",
         "type" : "Cat"

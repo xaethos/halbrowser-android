@@ -31,6 +31,10 @@ public class ProfileInflater {
 
     private ResourceConfiguration parseRoot(final XmlPullParser parser) throws IOException, XmlPullParserException {
         nextTagEvent(parser);
+        return inflateResource(parser);
+    }
+
+    private ResourceConfiguration inflateResource(final XmlPullParser parser) throws IOException, XmlPullParserException {
         ResourceConfigurationImpl config = new ResourceConfigurationImpl(Xml.asAttributeSet(parser));
 
         while (nextTagEvent(parser) == START_TAG) {
@@ -43,6 +47,10 @@ public class ProfileInflater {
                 config.setDefaultLinkConfiguration(inflateLink(parser));
             } else if ("link".equals(name)) {
                 config.addLinkConfiguration(inflateLink(parser));
+            } else if ("resource".equals(name)) {
+                config.addResourceConfiguration(inflateResource(parser));
+            } else if ("defaultResource".equals(name)) {
+                config.setDefaultResourceConfiguration(inflateResource(parser));
             } else {
                 throw new XmlPullParserException("Unexpected element: " + name); // TODO: XML schema
             }
@@ -81,25 +89,43 @@ public class ProfileInflater {
 
     private class ResourceConfigurationImpl implements ResourceConfiguration {
 
+        private String mRel;
         private int mLayoutRes;
+        private int mContainerId;
         private PropertyConfiguration mDefaultPropertyConfig;
         private HashMap<String, PropertyConfiguration> mPropertyConfigMap;
         private LinkConfiguration mDefaultLinkConfig;
         private HashMap<String, HashMap<String, LinkConfiguration>> mLinksConfigMap;
+        private ResourceConfiguration mDefaultResourceConfig;
+        private HashMap<String, ResourceConfiguration> mResourceConfigMap;
 
         public ResourceConfigurationImpl(AttributeSet attrs) {
             int count = attrs.getAttributeCount();
             for (int i = 0; i < count; ++i) {
                 String name = attrs.getAttributeName(i);
                 if ("layout".equals(name)) mLayoutRes = attrs.getAttributeResourceValue(i, 0);
+                else if ("rel".equals(name)) mRel = attrs.getAttributeValue(i);
+                else if ("container".equals(name))
+                    mContainerId = attrs.getAttributeResourceValue(i, 0);
             }
             mPropertyConfigMap = new HashMap<String, PropertyConfiguration>();
             mLinksConfigMap = new HashMap<String, HashMap<String, LinkConfiguration>>();
+            mResourceConfigMap = new HashMap<String, ResourceConfiguration>();
+        }
+
+        @Override
+        public String getRel() {
+            return mRel;
         }
 
         @Override
         public int getLayoutRes() {
             return mLayoutRes;
+        }
+
+        @Override
+        public int getContainerId() {
+            return mContainerId;
         }
 
         public void addPropertyConfiguration(PropertyConfiguration config) {
@@ -159,6 +185,23 @@ public class ProfileInflater {
             mDefaultLinkConfig = config;
         }
 
+        public void addResourceConfiguration(ResourceConfiguration config) {
+            mResourceConfigMap.put(config.getRel(), config);
+        }
+
+        @Override
+        public ResourceConfiguration getResourceConfiguration(String rel) {
+            return mResourceConfigMap.get(rel);
+        }
+
+        @Override
+        public ResourceConfiguration getDefaultResourceConfiguration() {
+            return mDefaultResourceConfig;
+        }
+
+        private void setDefaultResourceConfiguration(ResourceConfiguration config) {
+            mDefaultResourceConfig = config;
+        }
     }
 
     private class PropertyConfigurationImpl implements PropertyConfiguration {
