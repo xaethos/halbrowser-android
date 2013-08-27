@@ -1,11 +1,9 @@
 package net.xaethos.android.halbrowser.profile;
 
-public interface PropertyConfiguration {
+public interface PropertyConfiguration extends ElementConfiguration {
 
     public String getName();
 
-    public int getLayoutRes();
-    public int getContainerId();
     public int getLabelId();
     public int getContentId();
 

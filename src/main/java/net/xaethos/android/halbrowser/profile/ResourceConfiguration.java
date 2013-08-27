@@ -2,12 +2,9 @@ package net.xaethos.android.halbrowser.profile;
 
 import java.util.Collection;
 
-public interface ResourceConfiguration {
+public interface ResourceConfiguration extends ElementConfiguration {
 
     public String getRel();
-
-    public int getLayoutRes();
-    public int getContainerId();
 
     boolean hasPropertyConfiguration(String name);
     PropertyConfiguration getPropertyConfiguration(String name);

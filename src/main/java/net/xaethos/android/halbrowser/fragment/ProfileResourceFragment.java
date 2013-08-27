@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import net.xaethos.android.halbrowser.profile.ElementConfiguration;
 import net.xaethos.android.halbrowser.profile.LinkConfiguration;
 import net.xaethos.android.halbrowser.profile.PropertyConfiguration;
 import net.xaethos.android.halbrowser.profile.ResourceConfiguration;
@@ -44,77 +45,129 @@ public class ProfileResourceFragment extends BaseResourceFragment {
     // *** Resource binding
 
     @Override
-    protected boolean onBindProperty(View root, HALResource resource, HALProperty property) {
-        String propertyName = property.getName();
-        ResourceConfiguration profile = getConfiguration();
-        PropertyConfiguration config;
+    protected final void bindResource(View root, HALResource resource) {
+        if (root == null || resource == null) return;
 
-        if (profile.hasPropertyConfiguration(propertyName)) {
-            config = profile.getPropertyConfiguration(propertyName);
-        } else {
-            config = profile.getDefaultPropertyConfiguration();
-        }
-
-        if (config == null) return false;
-
-        ViewGroup container = (ViewGroup) root.findViewById(config.getContainerId());
-        if (container != null) {
-            root = container;
-            if (config.getLayoutRes() > 0) {
-                View layout = getActivity().getLayoutInflater().inflate(config.getLayoutRes(), container, false);
-                container.addView(layout);
-                root = layout;
-            }
-        }
-
-        View view;
-        view = root.findViewById(config.getLabelId());
-        if (view != null && view instanceof TextView) {
-            ((TextView) view).setText(propertyName);
-        }
-        view = root.findViewById(config.getContentId());
-        if (view != null && view instanceof TextView) {
-            Object value = property.getValue();
-            if (value != null) {
-                ((TextView) view).setText(value.toString());
-            }
-        }
-        return true;
+        ResourceConfiguration config = getConfiguration();
+        root = getResourceView(root, resource, config);
+        bindResourceView(root, resource, config);
     }
 
-    @Override
-    protected boolean onBindLink(View root, HALResource resource, HALLink link) {
-        ResourceConfiguration profile = getConfiguration();
-        String rel = link.getRel();
-        Object nameObj = link.getAttribute("name");
-        String name = nameObj == null ? null : nameObj.toString();
-        LinkConfiguration config;
+    protected View getResourceView(View root, HALResource resource, ResourceConfiguration config) {
+        return getElementView(root, config);
+    }
 
-        config = profile.getLinkConfiguration(rel, name);
-        if (config == null) config = profile.getDefaultLinkConfiguration();
-        if (config == null) return false;
+    protected View getPropertyView(View root, HALProperty property, PropertyConfiguration config) {
+        return getElementView(root, config);
+    }
 
-        ViewGroup container = (ViewGroup) root.findViewById(config.getContainerId());
-        if (container != null) {
-            root = container;
-            if (config.getLayoutRes() > 0) {
-                View layout = getActivity().getLayoutInflater().inflate(config.getLayoutRes(), container, false);
-                container.addView(layout);
-                root = layout;
+    protected View getLinkView(View root, HALLink link, LinkConfiguration config) {
+        return getElementView(root, config);
+    }
+
+    protected void bindResourceView(View root, HALResource resource, ResourceConfiguration config) {
+        View elementView;
+        PropertyConfiguration propertyConfig;
+        LinkConfiguration linkConfig;
+        ResourceConfiguration embeddedConfig;
+
+        for (HALProperty property : resource.getProperties()) {
+            propertyConfig = getPropertyConfiguration(config, property);
+            elementView = getPropertyView(root, property, propertyConfig);
+            bindPropertyView(elementView, property, propertyConfig);
+        }
+
+        for (String rel : resource.getLinkRels()) {
+            for (HALLink link : resource.getLinks(rel)) {
+                linkConfig = getLinkConfiguration(config, link);
+                elementView = getLinkView(root, link, linkConfig);
+                bindLinkView(elementView, link, linkConfig);
             }
         }
 
-        View view = root.findViewById(config.getLabelId());
-        if (view != null && view instanceof TextView) {
+        for (String rel : resource.getResourceRels()) {
+            for (HALResource embedded : resource.getResources(rel)) {
+                embeddedConfig = getResourceConfiguration(config, rel);
+                elementView = getResourceView(root, embedded, embeddedConfig);
+                bindResourceView(elementView, embedded, embeddedConfig);
+            }
+        }
+    }
+
+    protected void bindPropertyView(View view, HALProperty property, PropertyConfiguration config) {
+        if (config == null) return;
+
+        TextView tv;
+
+        if ((tv = findTextView(view, config.getLabelId())) != null) {
+            tv.setText(property.getName());
+        }
+
+        if ((tv = findTextView(view, config.getContentId())) != null) {
+            tv.setText(property.getValueString());
+        }
+    }
+
+    protected void bindLinkView(View view, HALLink link, LinkConfiguration config) {
+        if (config == null) return;
+
+        TextView label = findTextView(view, config.getLabelId());
+
+        if (label != null) {
             String title = link.getTitle();
-            ((TextView) view).setText(title == null ? rel : title);
+            label.setText(title == null ? link.getRel() : title);
         }
-        return true;
     }
 
-    @Override
-    protected boolean onBindEmbedded(View root, HALResource resource, HALResource embedded, String rel) {
-        return false;
+    // *** Helpers
+
+    private TextView findTextView(View root, int viewId) {
+        View view = root.findViewById(viewId);
+        if (view != null && view instanceof TextView) return (TextView) view;
+        return null;
+    }
+
+    private View getElementView(View root, ElementConfiguration config) {
+        if (config == null) return root;
+
+        View container = root.findViewById(config.getContainerId());
+        if (container == null) return root;
+        if (!(container instanceof ViewGroup)) {
+            throw new IllegalArgumentException("Container must be a ViewGroup");
+        }
+
+        int layoutRes = config.getLayoutRes();
+        if (layoutRes == 0) return container;
+
+        View layout = getActivity().getLayoutInflater().inflate(layoutRes, (ViewGroup) container, false);
+        if (layout == null) throw new RuntimeException("Couldn't inflate layout");
+
+        ((ViewGroup) container).addView(layout);
+        return layout;
+    }
+
+    private PropertyConfiguration getPropertyConfiguration(ResourceConfiguration profile, HALProperty property) {
+        if (profile == null) return null;
+
+        PropertyConfiguration config = profile.getPropertyConfiguration(property.getName());
+        if (config == null) config = profile.getDefaultPropertyConfiguration();
+        return config;
+    }
+
+    private LinkConfiguration getLinkConfiguration(ResourceConfiguration profile, HALLink link) {
+        if (profile == null) return null;
+
+        LinkConfiguration config = profile.getLinkConfiguration(link.getRel(), link.getName());
+        if (config == null) config = profile.getDefaultLinkConfiguration();
+        return config;
+    }
+
+    private ResourceConfiguration getResourceConfiguration(ResourceConfiguration profile, String rel) {
+        if (profile == null) return null;
+
+        ResourceConfiguration config = profile.getResourceConfiguration(rel);
+        if (config == null) config = profile.getDefaultResourceConfiguration();
+        return config;
     }
 
 }

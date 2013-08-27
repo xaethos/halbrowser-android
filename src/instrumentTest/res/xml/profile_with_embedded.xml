@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resource href="http://example.com/profile/sample"
-          layout="@layout/resource_with_properties_container">
+          layout="@layout/resource_with_pets">
 
     <property name="name"
               labelView="@id/label"
@@ -9,9 +9,6 @@
     <resource rel="pet"
               layout="@layout/pet_item"
               container="@id/pets_container">
-
-        <property name="name"
-                  contentView="@id/text_name"/>
 
         <property name="type"
                   contentView="@id/text_type"/>

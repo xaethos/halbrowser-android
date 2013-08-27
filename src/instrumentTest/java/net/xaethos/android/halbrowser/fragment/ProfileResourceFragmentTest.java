@@ -57,9 +57,7 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
     }
 
     public void testPropertyConfiguration() throws Exception {
-        loadConfiguration(R.xml.profile_with_property);
-        getActivity().loadFragment(fragment);
-        getInstrumentation().waitForIdleSync();
+        startActivityWithConfiguration(R.xml.profile_with_property);
 
         View root = fragment.getView();
         ViewGroup propertiesContainer = (ViewGroup) root.findViewById(R.id.properties_container);
@@ -73,9 +71,7 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
     }
 
     public void testDefaultPropertyConfiguration() throws Exception {
-        loadConfiguration(R.xml.profile_with_default_property);
-        getActivity().loadFragment(fragment);
-        getInstrumentation().waitForIdleSync();
+        startActivityWithConfiguration(R.xml.profile_with_default_property);
 
         View root = fragment.getView();
         ViewGroup propertiesContainer = (ViewGroup) root.findViewById(R.id.properties_container);
@@ -86,9 +82,7 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
     }
 
     public void testLinkConfiguration() throws Exception {
-        loadConfiguration(R.xml.profile_with_link);
-        getActivity().loadFragment(fragment);
-        getInstrumentation().waitForIdleSync();
+        startActivityWithConfiguration(R.xml.profile_with_link);
 
         View root = fragment.getView();
         ViewGroup container;
@@ -108,6 +102,26 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
         assertThat(button.getText().toString(), is("self"));
         button = (Button) container.getChildAt(1);
         assertThat(button.getText().toString(), is("alternate"));
+    }
+
+    public void testEmbeddedConfiguration() throws Exception {
+        startActivityWithConfiguration(R.xml.profile_with_embedded);
+
+        ViewGroup container = (ViewGroup) fragment.getView().findViewById(R.id.pets_container);
+        assertThat(container.getChildCount(), is(2));
+
+        ViewGroup petLayout = (ViewGroup) container.getChildAt(0);
+        TextView tv;
+        tv = (TextView) petLayout.findViewById(R.id.text_name);
+        assertThat(tv.getText().toString(), is("Odis"));
+        tv = (TextView) petLayout.findViewById(R.id.text_type);
+        assertThat(tv.getText().toString(), is("Dog"));
+
+        petLayout = (ViewGroup) container.getChildAt(1);
+        tv = (TextView) petLayout.findViewById(R.id.text_name);
+        assertThat(tv.getText().toString(), is("Garfield"));
+        tv = (TextView) petLayout.findViewById(R.id.text_type);
+        assertThat(tv.getText().toString(), is("Cat"));
     }
 
     // *** Helpers
@@ -134,6 +148,12 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
 
     private void loadConfiguration(int resId) {
         fragment.setConfiguration(inflateConfiguration(resId));
+    }
+
+    private void startActivityWithConfiguration(int configRes) {
+        loadConfiguration(configRes);
+        getActivity().loadFragment(fragment);
+        getInstrumentation().waitForIdleSync();
     }
 
 }

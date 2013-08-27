@@ -7,21 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.xaethos.android.halparser.HALLink;
-import net.xaethos.android.halparser.HALProperty;
 import net.xaethos.android.halparser.HALResource;
 
-public abstract class BaseResourceFragment extends Fragment
-{
+public abstract class BaseResourceFragment extends Fragment {
     // ***** Constants
 
     // *** Argument/State keys
     protected static final String ARG_RESOURCE = "xae:resource";
 
     // ***** Instance fields
-
-    private HALResource mResource;
     protected OnLinkFollowListener mLinkListener;
+    private HALResource mResource;
 
     // ***** Instance methods
 
@@ -79,28 +75,6 @@ public abstract class BaseResourceFragment extends Fragment
 
     // *** Resource management
 
-    protected void bindResource(View root, HALResource resource) {
-        if (root == null || resource == null) return;
-
-        for (HALProperty property : resource.getProperties()) {
-            onBindProperty(root, resource, property);
-        }
-
-        for (String rel : resource.getLinkRels()) {
-            for (HALLink link : resource.getLinks(rel)) {
-                onBindLink(root, resource, link);
-            }
-        }
-
-        for (String rel : resource.getResourceRels()) {
-            for (HALResource embedded : resource.getResources(rel)) {
-                onBindEmbedded(root, resource, embedded, rel);
-            }
-        }
-    }
-
-    protected abstract boolean onBindProperty(View root, HALResource resource, HALProperty property);
-    protected abstract boolean onBindLink(View root, HALResource resource, HALLink link);
-    protected abstract boolean onBindEmbedded(View root, HALResource resource, HALResource embedded, String rel);
+    protected abstract void bindResource(View root, HALResource resource);
 
 }

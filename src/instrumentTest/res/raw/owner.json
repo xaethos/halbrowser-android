@@ -21,9 +21,8 @@
       },
       {
         "_links" : {
-          "self" : { "href" : "/pet/456" }
+          "self" : { "href" : "/pet/456", "title" : "Garfield" }
         },
-        "name" : "Garfield",
         "type" : "Cat"
       }
     ]

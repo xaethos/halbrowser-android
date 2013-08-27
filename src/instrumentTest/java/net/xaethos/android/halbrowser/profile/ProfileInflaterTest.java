@@ -100,7 +100,6 @@ public class ProfileInflaterTest extends InstrumentationTestCase {
         assertThat(embeddedConfig.getLayoutRes(), is(R.layout.pet_item));
         assertThat(embeddedConfig.getContainerId(), is(R.id.pets_container));
 
-        assertThat(embeddedConfig.getPropertyConfiguration("name").getContentId(), is(R.id.text_name));
         assertThat(embeddedConfig.getPropertyConfiguration("type").getContentId(), is(R.id.text_type));
         assertThat(embeddedConfig.getLinkConfiguration("self", null).getLabelId(), is(R.id.text_name));
 
