@@ -87,11 +87,25 @@ public class ProfileInflater {
 
     // ***** Inner classes
 
-    private class ResourceConfigurationImpl implements ResourceConfiguration {
+    private class ElementConfigurationImpl implements ElementConfiguration {
+
+        protected int mLayoutRes;
+        protected int mContainerId;
+
+        @Override
+        public int getLayoutRes() {
+            return mLayoutRes;
+        }
+
+        @Override
+        public int getContainerId() {
+            return mContainerId;
+        }
+    }
+
+    private class ResourceConfigurationImpl extends ElementConfigurationImpl implements ResourceConfiguration {
 
         private String mRel;
-        private int mLayoutRes;
-        private int mContainerId;
         private PropertyConfiguration mDefaultPropertyConfig;
         private HashMap<String, PropertyConfiguration> mPropertyConfigMap;
         private LinkConfiguration mDefaultLinkConfig;
@@ -116,16 +130,6 @@ public class ProfileInflater {
         @Override
         public String getRel() {
             return mRel;
-        }
-
-        @Override
-        public int getLayoutRes() {
-            return mLayoutRes;
-        }
-
-        @Override
-        public int getContainerId() {
-            return mContainerId;
         }
 
         public void addPropertyConfiguration(PropertyConfiguration config) {
@@ -204,11 +208,9 @@ public class ProfileInflater {
         }
     }
 
-    private class PropertyConfigurationImpl implements PropertyConfiguration {
+    private class PropertyConfigurationImpl extends ElementConfigurationImpl implements PropertyConfiguration {
 
         private String mName;
-        private int mLayoutRes;
-        private int mContainerId;
         private int mLabelId;
         private int mContentId;
 
@@ -232,16 +234,6 @@ public class ProfileInflater {
         }
 
         @Override
-        public int getLayoutRes() {
-            return mLayoutRes;
-        }
-
-        @Override
-        public int getContainerId() {
-            return mContainerId;
-        }
-
-        @Override
         public int getLabelId() {
             return mLabelId;
         }
@@ -252,12 +244,10 @@ public class ProfileInflater {
         }
     }
 
-    private class LinkConfigurationImpl implements LinkConfiguration {
+    private class LinkConfigurationImpl extends ElementConfigurationImpl implements LinkConfiguration {
 
         private String mRel;
         private String mName;
-        private int mLayoutRes;
-        private int mContainerId;
         private int mLabelId;
 
         public LinkConfigurationImpl(AttributeSet attrs) {
@@ -281,16 +271,6 @@ public class ProfileInflater {
         @Override
         public String getName() {
             return mName;
-        }
-
-        @Override
-        public int getLayoutRes() {
-            return mLayoutRes;
-        }
-
-        @Override
-        public int getContainerId() {
-            return mContainerId;
         }
 
         @Override
