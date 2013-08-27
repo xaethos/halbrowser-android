@@ -29,7 +29,7 @@ public class APIClientTest extends HALBrowserTestCase
         Loader<HALResource> loader = client.getLoader(getContext());
 
         HALResource resource = getLoaderResultSynchronously(loader);
-        assertThat(resource.getLink(Relation.SELF).getHref(), is("https://example.com/api/customer/123456"));
+        assertThat(resource.getLink("self").getHref(), is("https://example.com/api/customer/123456"));
     }
 
     public void testLoadPath() {
@@ -38,7 +38,7 @@ public class APIClientTest extends HALBrowserTestCase
         Loader<HALResource> loader = client.getLoaderForURI(getContext(), "/foo/bar");
 
         HALResource resource = getLoaderResultSynchronously(loader);
-        assertThat(resource.getLink(Relation.SELF).getHref(), is("https://example.com/api/customer/123456"));
+        assertThat(resource.getLink("self").getHref(), is("https://example.com/api/customer/123456"));
     }
 
     public void testRequestHeaders() {
