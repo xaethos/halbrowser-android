@@ -8,8 +8,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 
 import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
@@ -137,18 +135,8 @@ public class ProfileInflater {
         }
 
         @Override
-        public boolean hasPropertyConfiguration(String name) {
-            return mPropertyConfigMap.containsKey(name);
-        }
-
-        @Override
         public PropertyConfiguration getPropertyConfiguration(String name) {
             return mPropertyConfigMap.get(name);
-        }
-
-        @Override
-        public Collection<PropertyConfiguration> getPropertyConfigurations() {
-            return Collections.unmodifiableCollection(mPropertyConfigMap.values());
         }
 
         @Override
