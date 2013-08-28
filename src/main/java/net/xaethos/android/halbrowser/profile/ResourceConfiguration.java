@@ -1,6 +1,8 @@
 package net.xaethos.android.halbrowser.profile;
 
-public interface ResourceConfiguration extends ElementConfiguration {
+import net.xaethos.android.halparser.HALResource;
+
+public interface ResourceConfiguration extends ElementConfiguration<HALResource> {
 
     public String getRel();
 

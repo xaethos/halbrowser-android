@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import net.xaethos.android.halbrowser.profile.ElementConfiguration;
 import net.xaethos.android.halbrowser.profile.LinkConfiguration;
@@ -89,60 +88,32 @@ public class ProfileResourceFragment extends BaseResourceFragment {
             for (HALResource embedded : resource.getResources(rel)) {
                 embeddedConfig = getResourceConfiguration(config, rel);
                 elementView = getResourceView(root, embedded, embeddedConfig);
+                if (embeddedConfig != null) embeddedConfig.bindView(elementView, embedded);
                 bindResourceView(elementView, embedded, embeddedConfig);
             }
         }
     }
 
     protected void bindPropertyView(View view, HALProperty property, PropertyConfiguration config) {
-        if (config == null) return;
-
-        TextView tv;
-
-        if ((tv = findTextView(view, config.getLabelId())) != null) {
-            tv.setText(property.getName());
-        }
-
-        if ((tv = findTextView(view, config.getContentId())) != null) {
-            tv.setText(property.getValueString());
-        }
+        if (config != null) config.bindView(view, property);
     }
 
     protected void bindLinkView(View view, HALLink link, LinkConfiguration config) {
-        if (config == null) return;
-
-        TextView label = findTextView(view, config.getLabelId());
-
-        if (label != null) {
-            String title = link.getTitle();
-            label.setText(title == null ? link.getRel() : title);
-        }
+        if (config != null) config.bindView(view, link);
     }
 
     // *** Helpers
 
-    private TextView findTextView(View root, int viewId) {
-        View view = root.findViewById(viewId);
-        if (view != null && view instanceof TextView) return (TextView) view;
-        return null;
-    }
-
     private View getElementView(View root, ElementConfiguration config) {
         if (config == null) return root;
 
-        View container = root.findViewById(config.getContainerId());
+        ViewGroup container = config.findContainerView(root);
         if (container == null) return root;
-        if (!(container instanceof ViewGroup)) {
-            throw new IllegalArgumentException("Container must be a ViewGroup");
-        }
 
-        int layoutRes = config.getLayoutRes();
-        if (layoutRes == 0) return container;
+        View layout = config.inflateLayout(getActivity().getLayoutInflater(), container);
+        if (layout == null) return container;
 
-        View layout = getActivity().getLayoutInflater().inflate(layoutRes, (ViewGroup) container, false);
-        if (layout == null) throw new RuntimeException("Couldn't inflate layout");
-
-        ((ViewGroup) container).addView(layout);
+        container.addView(layout);
         return layout;
     }
 
