@@ -5,7 +5,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -61,13 +60,10 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
 
         View root = fragment.getView();
         ViewGroup propertiesContainer = (ViewGroup) root.findViewById(R.id.properties_container);
+
         assertThat(propertiesContainer.getChildCount(), is(1));
-
-        TextView tv = (TextView) propertiesContainer.findViewById(R.id.property_name);
-        assertThat(tv.getText().toString(), is("name"));
-
-        tv = (TextView) propertiesContainer.findViewById(R.id.property_value);
-        assertThat(tv.getText().toString(), is("John"));
+        assertThat(getText(propertiesContainer, R.id.property_name), is("name"));
+        assertThat(getText(propertiesContainer, R.id.property_value), is("John"));
     }
 
     public void testDefaultPropertyConfiguration() throws Exception {
@@ -77,8 +73,7 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
         ViewGroup propertiesContainer = (ViewGroup) root.findViewById(R.id.properties_container);
         assertThat(propertiesContainer.getChildCount(), is(1));
 
-        TextView tv = (TextView) propertiesContainer.findViewById(android.R.id.text1);
-        assertThat(tv.getText().toString(), is("33"));
+        assertThat(getText(propertiesContainer, android.R.id.text1), is("33"));
     }
 
     public void testLinkConfiguration() throws Exception {
@@ -86,22 +81,17 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
 
         View root = fragment.getView();
         ViewGroup container;
-        Button button = (Button) root.findViewById(R.id.link_wiki_main);
-        assertThat(button.getText().toString(), is("Jon Arbuckle"));
+        assertThat(getText(root, R.id.link_wiki_main), is("Jon Arbuckle"));
 
         container = (ViewGroup) root.findViewById(R.id.links_wiki_container);
         assertThat(container.getChildCount(), is(2));
-        button = (Button) container.getChildAt(0);
-        assertThat(button.getText().toString(), is("Garfield"));
-        button = (Button) container.getChildAt(1);
-        assertThat(button.getText().toString(), is("Dr. Liz Wilson"));
+        assertThat(getText(container.getChildAt(0)), is("Garfield"));
+        assertThat(getText(container.getChildAt(1)), is("Dr. Liz Wilson"));
 
         container = (ViewGroup) root.findViewById(R.id.links_container);
         assertThat(container.getChildCount(), is(2));
-        button = (Button) container.getChildAt(0);
-        assertThat(button.getText().toString(), is("self"));
-        button = (Button) container.getChildAt(1);
-        assertThat(button.getText().toString(), is("alternate"));
+        assertThat(getText(container.getChildAt(0)), is("self"));
+        assertThat(getText(container.getChildAt(1)), is("alternate"));
     }
 
     public void testEmbeddedConfiguration() throws Exception {
@@ -111,20 +101,24 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
         assertThat(container.getChildCount(), is(2));
 
         ViewGroup petLayout = (ViewGroup) container.getChildAt(0);
-        TextView tv;
-        tv = (TextView) petLayout.findViewById(R.id.text_name);
-        assertThat(tv.getText().toString(), is("Odis"));
-        tv = (TextView) petLayout.findViewById(R.id.text_type);
-        assertThat(tv.getText().toString(), is("Dog"));
+        assertThat(getText(petLayout, R.id.text_name), is("Odis"));
+        assertThat(getText(petLayout, R.id.text_type), is("Dog"));
 
         petLayout = (ViewGroup) container.getChildAt(1);
-        tv = (TextView) petLayout.findViewById(R.id.text_name);
-        assertThat(tv.getText().toString(), is("Garfield"));
-        tv = (TextView) petLayout.findViewById(R.id.text_type);
-        assertThat(tv.getText().toString(), is("Cat"));
+        assertThat(getText(petLayout, R.id.text_name), is("Garfield"));
+        assertThat(getText(petLayout, R.id.text_type), is("Cat"));
     }
 
     // *** Helpers
+
+    protected String getText(View view) {
+        CharSequence text = ((TextView) view).getText();
+        return text == null ? null : text.toString();
+    }
+
+    protected String getText(View root, int viewId) {
+        return getText(root.findViewById(viewId));
+    }
 
     protected Context getTargetContext() {
         return getInstrumentation().getTargetContext();
