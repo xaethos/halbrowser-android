@@ -23,6 +23,18 @@ import static org.xmlpull.v1.XmlPullParser.END_TAG;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 public class ProfileInflater {
+    private static final String TAG_PROPERTY = "property";
+    private static final String TAG_DEFAULT_PROPERTY = "defaultProperty";
+    private static final String TAG_LINK = "link";
+    private static final String TAG_DEFAULT_LINK = "defaultLink";
+    private static final String TAG_RESOURCE = "resource";
+    private static final String TAG_DEFAULT_RESOURCE = "defaultResource";
+    private static final String ATTR_LAYOUT = "layout";
+    private static final String ATTR_REL = "rel";
+    private static final String ATTR_CONTAINER = "container";
+    private static final String ATTR_NAME = "name";
+    private static final String ATTR_LABEL_VIEW = "labelView";
+    private static final String ATTR_CONTENT_VIEW = "contentView";
 
     public ResourceConfiguration inflate(Context context, int resId) {
         XmlPullParser parser = context.getResources().getXml(resId);
@@ -45,17 +57,17 @@ public class ProfileInflater {
 
         while (nextTagEvent(parser) == START_TAG) {
             String name = parser.getName();
-            if ("defaultProperty".equals(name)) {
+            if (TAG_DEFAULT_PROPERTY.equals(name)) {
                 config.setDefaultPropertyConfiguration(inflateProperty(parser));
-            } else if ("property".equals(name)) {
+            } else if (TAG_PROPERTY.equals(name)) {
                 config.addPropertyConfiguration(inflateProperty(parser));
-            } else if ("defaultLink".equals(name)) {
+            } else if (TAG_DEFAULT_LINK.equals(name)) {
                 config.setDefaultLinkConfiguration(inflateLink(parser));
-            } else if ("link".equals(name)) {
+            } else if (TAG_LINK.equals(name)) {
                 config.addLinkConfiguration(inflateLink(parser));
-            } else if ("resource".equals(name)) {
+            } else if (TAG_RESOURCE.equals(name)) {
                 config.addResourceConfiguration(inflateResource(parser));
-            } else if ("defaultResource".equals(name)) {
+            } else if (TAG_DEFAULT_RESOURCE.equals(name)) {
                 config.setDefaultResourceConfiguration(inflateResource(parser));
             } else {
                 throw new XmlPullParserException("Unexpected element: " + name); // TODO: XML schema
@@ -150,9 +162,9 @@ public class ProfileInflater {
             int count = attrs.getAttributeCount();
             for (int i = 0; i < count; ++i) {
                 String name = attrs.getAttributeName(i);
-                if ("layout".equals(name)) mLayoutRes = attrs.getAttributeResourceValue(i, 0);
-                else if ("rel".equals(name)) mRel = attrs.getAttributeValue(i);
-                else if ("container".equals(name))
+                if (ATTR_LAYOUT.equals(name)) mLayoutRes = attrs.getAttributeResourceValue(i, 0);
+                else if (ATTR_REL.equals(name)) mRel = attrs.getAttributeValue(i);
+                else if (ATTR_CONTAINER.equals(name))
                     mContainerId = attrs.getAttributeResourceValue(i, 0);
             }
             mPropertyConfigMap = new HashMap<String, PropertyConfiguration>();
@@ -245,12 +257,14 @@ public class ProfileInflater {
             int count = attrs.getAttributeCount();
             for (int i = 0; i < count; ++i) {
                 String name = attrs.getAttributeName(i);
-                if ("name".equals(name)) mName = attrs.getAttributeValue(i);
-                else if ("layout".equals(name)) mLayoutRes = attrs.getAttributeResourceValue(i, 0);
-                else if ("container".equals(name))
+                if (ATTR_NAME.equals(name)) mName = attrs.getAttributeValue(i);
+                else if (ATTR_LAYOUT.equals(name))
+                    mLayoutRes = attrs.getAttributeResourceValue(i, 0);
+                else if (ATTR_CONTAINER.equals(name))
                     mContainerId = attrs.getAttributeResourceValue(i, 0);
-                else if ("labelView".equals(name)) mLabelId = attrs.getAttributeResourceValue(i, 0);
-                else if ("contentView".equals(name))
+                else if (ATTR_LABEL_VIEW.equals(name))
+                    mLabelId = attrs.getAttributeResourceValue(i, 0);
+                else if (ATTR_CONTENT_VIEW.equals(name))
                     mContentId = attrs.getAttributeResourceValue(i, 0);
             }
         }
@@ -294,12 +308,14 @@ public class ProfileInflater {
             int count = attrs.getAttributeCount();
             for (int i = 0; i < count; ++i) {
                 String name = attrs.getAttributeName(i);
-                if ("rel".equals(name)) mRel = attrs.getAttributeValue(i);
-                else if ("name".equals(name)) mName = attrs.getAttributeValue(i);
-                else if ("layout".equals(name)) mLayoutRes = attrs.getAttributeResourceValue(i, 0);
-                else if ("container".equals(name))
+                if (ATTR_REL.equals(name)) mRel = attrs.getAttributeValue(i);
+                else if (ATTR_NAME.equals(name)) mName = attrs.getAttributeValue(i);
+                else if (ATTR_LAYOUT.equals(name))
+                    mLayoutRes = attrs.getAttributeResourceValue(i, 0);
+                else if (ATTR_CONTAINER.equals(name))
                     mContainerId = attrs.getAttributeResourceValue(i, 0);
-                else if ("labelView".equals(name)) mLabelId = attrs.getAttributeResourceValue(i, 0);
+                else if (ATTR_LABEL_VIEW.equals(name))
+                    mLabelId = attrs.getAttributeResourceValue(i, 0);
             }
         }
 
