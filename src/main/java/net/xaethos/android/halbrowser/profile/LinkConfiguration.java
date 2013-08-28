@@ -1,8 +1,6 @@
 package net.xaethos.android.halbrowser.profile;
 
-import net.xaethos.android.halparser.HALLink;
-
-public interface LinkConfiguration extends ElementConfiguration<HALLink> {
+public interface LinkConfiguration extends ElementConfiguration {
 
     public String getRel();
     public String getName();

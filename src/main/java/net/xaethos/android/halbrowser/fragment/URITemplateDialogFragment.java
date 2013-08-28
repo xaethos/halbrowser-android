@@ -17,8 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class URITemplateDialogFragment extends DialogFragment implements DialogInterface.OnClickListener
-{
+public class URITemplateDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
 
     private static final String ARG_LINK = "link";
 

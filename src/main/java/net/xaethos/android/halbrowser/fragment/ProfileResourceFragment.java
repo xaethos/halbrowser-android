@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
-import net.xaethos.android.halbrowser.profile.ElementConfiguration;
 import net.xaethos.android.halbrowser.profile.LinkConfiguration;
 import net.xaethos.android.halbrowser.profile.PropertyConfiguration;
 import net.xaethos.android.halbrowser.profile.ResourceConfiguration;
@@ -53,18 +54,27 @@ public class ProfileResourceFragment extends BaseResourceFragment {
     }
 
     protected View getResourceView(View root, HALResource resource, ResourceConfiguration config) {
-        return getElementView(root, config);
+        if (config == null) return root;
+        return getElementView(root, new ResourceBinder(resource, config));
     }
 
     protected View getPropertyView(View root, HALProperty property, PropertyConfiguration config) {
-        return getElementView(root, config);
+        if (config == null) return root;
+        return getElementView(root, new PropertyBinder(property, config));
     }
 
     protected View getLinkView(View root, HALLink link, LinkConfiguration config) {
-        return getElementView(root, config);
+        if (config == null) return root;
+        return getElementView(root, new LinkBinder(link, config));
     }
 
     protected void bindResourceView(View root, HALResource resource, ResourceConfiguration config) {
+        if (config != null && root instanceof AdapterView) {
+            ElementAdapter adapter = adapterFor((AdapterView) root);
+            adapter.add(new ResourceAdapterBinder(resource, config));
+            return;
+        }
+
         View elementView;
         PropertyConfiguration propertyConfig;
         LinkConfiguration linkConfig;
@@ -88,33 +98,51 @@ public class ProfileResourceFragment extends BaseResourceFragment {
             for (HALResource embedded : resource.getResources(rel)) {
                 embeddedConfig = getResourceConfiguration(config, rel);
                 elementView = getResourceView(root, embedded, embeddedConfig);
-                if (embeddedConfig != null) embeddedConfig.bindView(elementView, embedded);
+                if (embeddedConfig != null)
+                    new ResourceBinder(embedded, embeddedConfig).bindView(elementView);
                 bindResourceView(elementView, embedded, embeddedConfig);
             }
         }
     }
 
     protected void bindPropertyView(View view, HALProperty property, PropertyConfiguration config) {
-        if (config != null) config.bindView(view, property);
+        if (config != null) bindElementView(view, new PropertyBinder(property, config));
     }
 
     protected void bindLinkView(View view, HALLink link, LinkConfiguration config) {
-        if (config != null) config.bindView(view, link);
+        if (config != null) bindElementView(view, new LinkBinder(link, config));
     }
 
     // *** Helpers
 
-    private View getElementView(View root, ElementConfiguration config) {
-        if (config == null) return root;
+    private ElementAdapter adapterFor(AdapterView view) {
+        ElementAdapter adapter = (ElementAdapter) view.getAdapter();
+        if (adapter == null) {
+            adapter = new ElementAdapter();
+            view.setAdapter(adapter);
+        }
+        return adapter;
+    }
 
-        ViewGroup container = config.findContainerView(root);
+    private View getElementView(View root, ElementBinder binder) {
+        ViewGroup container = binder.findContainerView(root);
         if (container == null) return root;
+        if (container instanceof AdapterView) return container;
 
-        View layout = config.inflateLayout(getActivity().getLayoutInflater(), container);
+        View layout = binder.inflateLayout(getActivity().getLayoutInflater(), container);
         if (layout == null) return container;
 
         container.addView(layout);
         return layout;
+    }
+
+    private void bindElementView(View view, ElementBinder binder) {
+        if (view instanceof AdapterView) {
+            ElementAdapter adapter = adapterFor((AdapterView) view);
+            adapter.add(binder);
+        } else {
+            binder.bindView(view);
+        }
     }
 
     private PropertyConfiguration getPropertyConfiguration(ResourceConfiguration profile, HALProperty property) {
@@ -139,6 +167,22 @@ public class ProfileResourceFragment extends BaseResourceFragment {
         ResourceConfiguration config = profile.getResourceConfiguration(rel);
         if (config == null) config = profile.getDefaultResourceConfiguration();
         return config;
+    }
+
+    // ***** Inner Classes
+
+    private class ElementAdapter extends ArrayAdapter<ElementBinder> {
+        public ElementAdapter() {
+            super(getActivity(), 0);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ElementBinder binder = getItem(position);
+            View view = binder.inflateLayout(getActivity().getLayoutInflater(), parent);
+            binder.bindView(view);
+            return view;
+        }
     }
 
 }

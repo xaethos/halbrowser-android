@@ -3,14 +3,6 @@ package net.xaethos.android.halbrowser.profile;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Xml;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import net.xaethos.android.halparser.HALLink;
-import net.xaethos.android.halparser.HALProperty;
-import net.xaethos.android.halparser.HALResource;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -105,7 +97,7 @@ public class ProfileInflater {
 
     // ***** Inner classes
 
-    private abstract class ElementConfigurationImpl<E> implements ElementConfiguration<E> {
+    private abstract class ElementConfigurationImpl implements ElementConfiguration {
 
         protected int mLayoutRes;
         protected int mContainerId;
@@ -120,35 +112,9 @@ public class ProfileInflater {
             return mContainerId;
         }
 
-        @Override
-        public ViewGroup findContainerView(View root) {
-            if (mContainerId == 0) return null;
-
-            View container = root.findViewById(mContainerId);
-            if (container instanceof ViewGroup) return (ViewGroup) container;
-
-            throw new IllegalArgumentException("Container must be a ViewGroup");
-        }
-
-        @Override
-        public View inflateLayout(LayoutInflater inflater, ViewGroup parent) {
-            if (mLayoutRes == 0) return null;
-
-            View layout = inflater.inflate(mLayoutRes, parent, false);
-            if (layout == null) throw new RuntimeException("Couldn't inflate layout");
-
-            return layout;
-        }
-
-        protected TextView findTextView(View root, int viewId) {
-            if (root == null || viewId == 0) return null;
-            View view = root.findViewById(viewId);
-            if (view != null && view instanceof TextView) return (TextView) view;
-            return null;
-        }
     }
 
-    private class ResourceConfigurationImpl extends ElementConfigurationImpl<HALResource> implements ResourceConfiguration {
+    private class ResourceConfigurationImpl extends ElementConfigurationImpl implements ResourceConfiguration {
 
         private String mRel;
         private PropertyConfiguration mDefaultPropertyConfig;
@@ -242,12 +208,9 @@ public class ProfileInflater {
             mDefaultResourceConfig = config;
         }
 
-        @Override
-        public void bindView(View view, HALResource resource) {
-        }
     }
 
-    private class PropertyConfigurationImpl extends ElementConfigurationImpl<HALProperty> implements PropertyConfiguration {
+    private class PropertyConfigurationImpl extends ElementConfigurationImpl implements PropertyConfiguration {
 
         private String mName;
         private int mLabelId;
@@ -284,21 +247,9 @@ public class ProfileInflater {
             return mContentId;
         }
 
-        @Override
-        public void bindView(View view, HALProperty property) {
-            TextView tv;
-
-            if ((tv = findTextView(view, mLabelId)) != null) {
-                tv.setText(property.getName());
-            }
-
-            if ((tv = findTextView(view, mContentId)) != null) {
-                tv.setText(property.getValueString());
-            }
-        }
     }
 
-    private class LinkConfigurationImpl extends ElementConfigurationImpl<HALLink> implements LinkConfiguration {
+    private class LinkConfigurationImpl extends ElementConfigurationImpl implements LinkConfiguration {
 
         private String mRel;
         private String mName;
@@ -334,15 +285,6 @@ public class ProfileInflater {
             return mLabelId;
         }
 
-        @Override
-        public void bindView(View view, HALLink link) {
-            TextView label = findTextView(view, mLabelId);
-
-            if (label != null) {
-                String title = link.getTitle();
-                label.setText(title == null ? link.getRel() : title);
-            }
-        }
     }
 
 }

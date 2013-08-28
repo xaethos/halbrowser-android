@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import net.xaethos.android.halbrowser.profile.ProfileInflater;
@@ -107,6 +109,24 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
         petLayout = (ViewGroup) container.getChildAt(1);
         assertThat(getText(petLayout, R.id.text_name), is("Garfield"));
         assertThat(getText(petLayout, R.id.text_type), is("Cat"));
+    }
+
+    public void testListAsContainer() throws Exception {
+        startActivityWithConfiguration(R.xml.profile_with_list);
+
+        ListView listView = (ListView) fragment.getView().findViewById(android.R.id.list);
+        ListAdapter adapter = listView.getAdapter();
+        assertThat(adapter.getCount(), is(9));
+
+        String[] expected = {
+                "name", "age", "self", "alternate",
+                "Jon Arbuckle", "Garfield", "Dr. Liz Wilson",
+                "Odis", "Garfield"
+        };
+
+        for (int i=0; i<9; ++i) {
+            assertThat(getText(listView.getChildAt(i), android.R.id.text1), is(expected[i]));
+        }
     }
 
     // *** Helpers

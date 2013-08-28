@@ -1,8 +1,6 @@
 package net.xaethos.android.halbrowser.profile;
 
-import net.xaethos.android.halparser.HALProperty;
-
-public interface PropertyConfiguration extends ElementConfiguration<HALProperty> {
+public interface PropertyConfiguration extends ElementConfiguration {
 
     public String getName();
 
