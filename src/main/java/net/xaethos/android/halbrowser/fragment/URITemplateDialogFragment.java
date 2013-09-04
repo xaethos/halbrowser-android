@@ -17,13 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class URITemplateDialogFragment extends DialogFragment implements DialogInterface.OnClickListener
-{
+public class URITemplateDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
 
     private static final String ARG_LINK = "link";
 
     private LinearLayout mLayout;
-    private ResourceFragment.OnLinkFollowListener mListener;
+    private OnLinkFollowListener mListener;
 
     public static URITemplateDialogFragment forLink(HALLink link) {
         Bundle args = new Bundle(1);
@@ -36,10 +35,10 @@ public class URITemplateDialogFragment extends DialogFragment implements DialogI
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (!(activity instanceof ResourceFragment.OnLinkFollowListener)) {
-            throw new IllegalArgumentException("Attaching activity must implement ResourceFragment.OnLinkFollowListener");
+        if (!(activity instanceof OnLinkFollowListener)) {
+            throw new IllegalArgumentException("Attaching activity must implement OnLinkFollowListener");
         }
-        mListener = (ResourceFragment.OnLinkFollowListener) activity;
+        mListener = (OnLinkFollowListener) activity;
     }
 
     @Override

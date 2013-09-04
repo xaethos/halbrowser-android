@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource href="http://example.com/profile/sample"
+          layout="@layout/resource_with_properties_container">
+
+    <property name="name"/>
+
+    <defaultProperty
+            layout="@android:layout/simple_list_item_1"
+            container="@id/properties_container"
+            contentView="@android:id/text1"/>
+
+</resource>

@@ -1,26 +1,32 @@
 package net.xaethos.android.halbrowser.fragment;
 
-import java.util.Map;
-
-import net.xaethos.android.halparser.HALLink;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 
-public class TestActivity extends FragmentActivity implements ResourceFragment.OnLinkFollowListener
+import net.xaethos.android.halparser.HALLink;
+
+import java.util.Map;
+
+public class TestActivity extends FragmentActivity implements OnLinkFollowListener
 {
+    public static final int FRAGMENT_ID = android.R.id.content;
+
     Pair<HALLink, Map<String, Object>> lastFollowed;
 
-    public void loadFragment(Fragment fragment) {
-        FragmentManager manager = getSupportFragmentManager();
+    public Fragment getFragment() {
+        return getSupportFragmentManager().findFragmentById(FRAGMENT_ID);
+    }
 
-        if (manager.findFragmentById(android.R.id.content) == null) {
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.add(android.R.id.content, fragment);
-            transaction.commit();
+    public void loadFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (getFragment() == null) {
+            transaction.add(FRAGMENT_ID, fragment);
+        } else {
+            transaction.replace(FRAGMENT_ID, fragment);
         }
+        transaction.commit();
     }
 
     @Override

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource href="http://example.com/profile/sample"
+          layout="@layout/resource_with_links">
+
+    <link rel="wiki"
+          name="main"
+          labelView="@id/link_wiki_main"/>
+
+    <link rel="wiki"
+          layout="@layout/link_button"
+          container="@id/links_wiki_container"
+          labelView="@id/link_button"/>
+
+    <defaultLink
+            layout="@layout/link_button"
+            container="@id/links_container"
+            labelView="@id/link_button"/>
+
+</resource>

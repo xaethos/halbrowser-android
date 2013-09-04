@@ -17,7 +17,6 @@ repositories {
 dependencies {
   compile 'com.google.android:support-v4:+'
   compile project('halparser-android')
-  compile project('cwac-merge')
 
   instrumentTestCompile(
     'org.hamcrest:hamcrest-all:1.3',

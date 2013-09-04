@@ -1,93 +1,63 @@
 package net.xaethos.android.halbrowser.fragment;
 
-import android.support.v4.app.ListFragment;
-import android.test.ActivityInstrumentationTestCase2;
-
-import com.jayway.android.robotium.solo.Solo;
+import android.os.Bundle;
+import android.test.InstrumentationTestCase;
 
 import net.xaethos.android.halbrowser.tests.R;
 import net.xaethos.android.halparser.HALResource;
-import net.xaethos.android.halparser.impl.BaseHALLink;
 import net.xaethos.android.halparser.impl.BaseHALResource;
 import net.xaethos.android.halparser.serializers.HALJsonSerializer;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import static java.util.Collections.singletonMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 
-public class BaseResourceFragmentTest extends ActivityInstrumentationTestCase2<TestActivity>
-{
-
-    TestActivity activity;
-    Solo solo;
-
-    public BaseResourceFragmentTest() {
-        super(TestActivity.class);
-    }
-
-    public void setUp() throws Exception {
-        activity = getActivity();
-        solo = new Solo(getInstrumentation(), activity);
-    }
+public class BaseResourceFragmentTest extends InstrumentationTestCase {
+    BaseResourceFragment fragment;
+    HALResource resource;
 
     @Override
-    public void tearDown() throws Exception {
-        solo.finishOpenedActivities();
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        fragment = new BaseResourceFragment();
     }
 
-    public void testPropertiesAndLinks() throws Exception {
-        BaseHALResource resource = new BaseHALResource();
-        resource.setValue("name", "John");
-        resource.addLink(new BaseHALLink("pet", "/pet/13", singletonMap("title", "Fido")));
-        resource.addLink(new BaseHALLink("alternate", "/owner/42"));
+    public void testResourceAccessors() throws Exception {
+        resource = new BaseHALResource();
 
-        BaseResourceFragment.Builder builder = new BaseResourceFragment.Builder();
-        ListFragment fragment = builder.setResource(resource).buildFragment(BaseResourceFragment.class);
-        activity.loadFragment(fragment);
-
-        assertThat(solo.searchText("John"), is(true));
-        assertThat(solo.searchText("Fido"), is(true));
-
-        assertThat(fragment.getListAdapter().getCount(), is(2));
-
-        solo.clickOnText("Fido");
-        assertThat(activity.lastFollowed.first, is(resource.getLink("pet")));
+        fragment.setResource(resource);
+        assertThat(fragment.getResource(), is(sameInstance(resource)));
     }
 
-    public void testEmbeddedResources() throws Exception {
-        HALResource resource = new HALJsonSerializer().parse(newReader(R.raw.owner));
+    public void testFragmentInstanceState() throws Exception {
+        resource = newResource(R.raw.owner);
 
-        BaseResourceFragment.Builder builder = new BaseResourceFragment.Builder();
-        ListFragment fragment = builder.setResource(resource).buildFragment(BaseResourceFragment.class);
-        activity.loadFragment(fragment);
+        fragment.setResource(resource);
 
-        assertThat(solo.searchText("John in Title"), is(false));
-        assertThat(solo.searchText("John"), is(true));
-        assertThat(solo.searchText("33"), is(true));
+        Bundle icicle = new Bundle();
+        fragment.onSaveInstanceState(icicle);
 
-        assertThat(solo.searchText("Odis"), is(true));
-        assertThat(solo.searchText("Dog"), is(true));
-        assertThat(solo.searchText("Toys"), is(false));
+        BaseResourceFragment restoredFragment = new BaseResourceFragment();
+        restoredFragment.onCreate(icicle);
 
-        assertThat(fragment.getListAdapter().getCount(), is(4));
-
-        solo.clickOnText("Odis");
-        assertThat(activity.lastFollowed.first, is(resource.getResource("pet").getLink("self")));
-
-        assertThat(solo.searchText("Garfield"), is(true));
-        assertThat(solo.searchText("Cat"), is(true));
-
-        solo.clickOnText("Garfield");
-        assertThat(activity.lastFollowed.first, is(resource.getResources("pet").get(1).getLink("self")));
+        assertThat(restoredFragment.getResource(), is(not(nullValue())));
+        assertThat(restoredFragment.getResource().getValueString("age"), is("33"));
     }
 
     // *** Helpers
 
     protected Reader newReader(int resId) {
-        return new InputStreamReader(activity.getResources().openRawResource(resId));
+        return new InputStreamReader(getInstrumentation().getTargetContext().getResources().openRawResource(resId));
+    }
+
+    protected HALResource newResource(int resId) throws Exception {
+        return new HALJsonSerializer().parse(newReader(resId));
     }
 
 }

@@ -1,12 +1,12 @@
 {
   "_links" : {
-    "self" : {
-      "href" : "/user/123456",
-      "title" : "John in Title"
-    },
-    "alternate" : {
-      "href" : "/owner/145135"
-    }
+    "self" : { "href" : "/user/123456" },
+    "alternate" : { "href" : "/owner/145135" },
+    "wiki" : [
+      { "href" : "http://en.wikipedia.org/wiki/Jon_Arbuckle", "title" : "Jon Arbuckle", "name" : "main" },
+      { "href" : "http://en.wikipedia.org/wiki/Garfield", "title" : "Garfield", "name" : "series" },
+      { "href" : "http://en.wikipedia.org/wiki/Garfield#Dr._Liz_Wilson", "title" : "Dr. Liz Wilson" }
+    ]
   },
   "name" : "John",
   "age" : 33,
@@ -14,24 +14,15 @@
     "pet" : [
       {
         "_links" : {
-          "self" : {
-            "href" : "/pet/321",
-            "title" : "Odis"
-          },
-          "toys" : {
-            "href" : "/pet/321/toys",
-            "title" : "Toys"
-          }
+          "self" : { "href" : "/pet/321", "title" : "Odis" },
+          "toys" : { "href" : "/pet/321/toys", "title" : "Toys" }
         },
         "type" : "Dog"
       },
       {
         "_links" : {
-          "self" : {
-            "href" : "/pet/456"
-          }
+          "self" : { "href" : "/pet/456", "title" : "Garfield" }
         },
-        "name" : "Garfield",
         "type" : "Cat"
       }
     ]
