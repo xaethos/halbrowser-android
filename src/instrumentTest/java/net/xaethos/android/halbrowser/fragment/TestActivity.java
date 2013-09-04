@@ -11,18 +11,20 @@ import java.util.Map;
 
 public class TestActivity extends FragmentActivity implements OnLinkFollowListener
 {
+    public static final int FRAGMENT_ID = android.R.id.content;
+
     Pair<HALLink, Map<String, Object>> lastFollowed;
 
     public Fragment getFragment() {
-        return getSupportFragmentManager().findFragmentById(android.R.id.content);
+        return getSupportFragmentManager().findFragmentById(FRAGMENT_ID);
     }
 
     public void loadFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (getFragment() == null) {
-            transaction.add(android.R.id.content, fragment);
+            transaction.add(FRAGMENT_ID, fragment);
         } else {
-            transaction.replace(android.R.id.content, fragment);
+            transaction.replace(FRAGMENT_ID, fragment);
         }
         transaction.commit();
     }

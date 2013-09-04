@@ -1,12 +1,11 @@
 package net.xaethos.android.halbrowser.fragment;
 
 import android.content.Context;
+import android.support.v4.app.FragmentTransaction;
 import android.test.ActivityInstrumentationTestCase2;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -52,8 +51,9 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
     }
 
     public void testOnCreateViewLoadConfigurationView() throws Exception {
-        loadConfiguration(R.xml.profile_with_property);
-        View root = fragment.onCreateView(getLayoutInflater(), null, null);
+        startActivityWithConfiguration(R.xml.profile_with_property);
+
+        View root = fragment.getView();
         assertThat(root.findViewById(R.id.properties_container), is(instanceOf(LinearLayout.class)));
     }
 
@@ -112,11 +112,11 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
     }
 
     public void testListAsContainer() throws Exception {
+        ListView listView;
         startActivityWithConfiguration(R.xml.profile_with_list);
 
-        ListView listView = (ListView) fragment.getView().findViewById(android.R.id.list);
-        ListAdapter adapter = listView.getAdapter();
-        assertThat(adapter.getCount(), is(9));
+        listView = (ListView) fragment.getView().findViewById(android.R.id.list);
+        assertThat(listView.getAdapter().getCount(), is(9));
 
         String[] expected = {
                 "name", "age", "self", "alternate",
@@ -127,6 +127,14 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
         for (int i=0; i<9; ++i) {
             assertThat(getText(listView.getChildAt(i), android.R.id.text1), is(expected[i]));
         }
+
+        FragmentTransaction t = getActivity().getSupportFragmentManager().beginTransaction();
+        t.remove(fragment);
+        t.add(TestActivity.FRAGMENT_ID, fragment);
+        t.commit();
+
+        listView = (ListView) fragment.getView().findViewById(android.R.id.list);
+        assertThat(listView.getAdapter().getCount(), is(9));
     }
 
     // *** Helpers
@@ -142,10 +150,6 @@ public class ProfileResourceFragmentTest extends ActivityInstrumentationTestCase
 
     protected Context getTargetContext() {
         return getInstrumentation().getTargetContext();
-    }
-
-    protected LayoutInflater getLayoutInflater() {
-        return (LayoutInflater) getTargetContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     protected Reader newReader(int resId) {

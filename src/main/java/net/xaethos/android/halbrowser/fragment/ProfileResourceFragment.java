@@ -36,15 +36,25 @@ public class ProfileResourceFragment extends BaseResourceFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        int layoutRes = getConfiguration().getLayoutRes();
-        if (layoutRes > 0) return inflater.inflate(layoutRes, container, false);
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View root;
+        ResourceConfiguration profile = getConfiguration();
+        int layoutRes = 0;
+
+        if (profile != null) layoutRes = profile.getLayoutRes();
+        if (layoutRes > 0) {
+            root = inflater.inflate(layoutRes, container, false);
+        } else {
+            root = super.onCreateView(inflater, container, savedInstanceState);
+        }
+
+        bindResource(root, getResource());
+
+        return root;
     }
 
 
     // *** Resource binding
 
-    @Override
     protected final void bindResource(View root, HALResource resource) {
         if (root == null || resource == null) return;
 
