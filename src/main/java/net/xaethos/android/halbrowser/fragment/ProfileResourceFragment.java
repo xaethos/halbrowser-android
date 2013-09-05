@@ -14,7 +14,7 @@ import net.xaethos.android.halparser.HALLink;
 import net.xaethos.android.halparser.HALProperty;
 import net.xaethos.android.halparser.HALResource;
 
-public class ProfileResourceFragment extends BaseResourceFragment {
+public class ProfileResourceFragment extends BaseResourceFragment implements AdapterView.OnItemClickListener {
 
     // ***** Instance fields
 
@@ -130,6 +130,7 @@ public class ProfileResourceFragment extends BaseResourceFragment {
         if (adapter == null) {
             adapter = new ElementAdapter();
             view.setAdapter(adapter);
+            view.setOnItemClickListener(this);
         }
         return adapter;
     }
@@ -177,6 +178,24 @@ public class ProfileResourceFragment extends BaseResourceFragment {
         ResourceConfiguration config = profile.getResourceConfiguration(rel);
         if (config == null) config = profile.getDefaultResourceConfiguration();
         return config;
+    }
+
+
+    // *** AdapterView.OnItemClickListener
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (mLinkListener == null) return;
+
+        ElementAdapter adapter = (ElementAdapter) adapterView.getAdapter();
+        ElementBinder binder = adapter.getItem(i);
+
+        if (binder.element instanceof HALLink) {
+            mLinkListener.onFollowLink((HALLink) binder.element, null);
+        } else if (binder.element instanceof HALResource) {
+            HALLink link = ((HALResource) binder.element).getLink("self");
+            if (link != null) mLinkListener.onFollowLink(link, null);
+        }
     }
 
     // ***** Inner Classes
